@@ -1,0 +1,65 @@
+{
+  "layer": "transparent",
+  "queue": 0,
+  "properties": [
+    "_BasicColor('Basic Color', Color) = (0.5,0.5,0.5,0.5)",
+    "_SaturatedColor('Saturated Color', Color) = (0.5,0.5,0.5,0.5)",
+
+    "_MainTex('Particle Texture',Texture)='white'{}",
+    "_ColorRamp('Color Ramp', Texture) = 'white' {}",
+    "_NoiseTex('Noise Texture', Texture) = 'white' {}",
+
+    "_EmissionSaturation('Emission saturation', Range(0.0, 8.0)) = 1.0",
+    "_OpacitySaturation('Opacity saturation', Range(0.0, 8.0)) = 1.0",
+    "_ColorMultiplier('Color multiplier', Range(0.0, 8.0)) = 1.0",
+    "_ABOffset('Alpha blend offset', Range(0.0, 8.0)) = 0.0",
+    
+    "_DissolveStep('DissolveStep.xy', Vector) = (0.0, 1.0, 0.0, 0.0)",
+    
+    "_Panning('Automatic Panning', Vector) = (0.0, 0.0, 0.0, 0.0)",
+
+    "_TintColor ('Tint Color', Color) = (0.5,0.5,0.5,0.5)",
+    "_GlobalAlpha('Global alpha', float) = 1.0",
+    
+    "_EmissivePower('Emissive Power', Range(1.0, 4.0)) = 1.0",
+    "_NoisePanning('Noise Panning', Vector) = (0.0, 0.0, 0.0, 0.0)",
+    
+    "COLOR_RAMP('COLOR_RAMP', float) = 0.0",
+    "COLOR_TINT('COLOR_TINT', float) = 0.0",
+    "APPLY_RGB_COLOR_VERTEX('APPLY_RGB_COLOR_VERTEX', float) = 0.0",
+    "DISSOLVE_ENABLED('DISSOLVE_ENABLED', float) = 0.0",
+    "AUTOMATICPANNING('AUTOMATICPANNING', float) = 0.0",
+    "EMISSIVEPOWER('EMISSIVEPOWER', float) = 0.0",
+    "EXTENDED_PARTICLES('EXTENDED_PARTICLES', float) = 0.0",
+    "NOISE_TEXTURE('NOISE_TEXTURE', float) = 0.0",
+    "NOISE_TEXTURE_EMISSION('NOISE_TEXTURE_EMISSION', float) = 0.0",
+    "NOISE_TEXTURE_ALPHA('NOISE_TEXTURE_ALPHA', float) = 0.0",
+    "NOISE_TEXTURE_DISSOLVE('NOISE_TEXTURE_DISSOLVE', float) = 0.0",
+    "NOISEUV('NOISEUV', float) = 0.0",
+    "FLOWMAP('FLOWMAP', float) = 0.0",
+    "BlendMode('BlendMode', float) = 0.0"
+  ],
+  "passes": {
+    "base": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem_transparent_particles_standard",
+        "fs": "particlesystem_transparent_particles_standard"
+      }
+    ],
+    "base_fog": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem_transparent_particles_standard",
+        "fs": "particlesystem_transparent_particles_standard"
+      }
+    ],
+    "shadowgen": [],
+    "bone": [],
+    "shadowuse": []
+  }
+}

@@ -1,0 +1,1 @@
+{"shader":"diffuse_bothside.shader.json","srcshader":"Gd3d/Diffuse_BothSide","queue":0,"mapUniform":{"_MainTex":{"type":0,"value":"Hierophant_air.imgdesc.json"},"_AlphaCut":{"type":1,"value":0.349999994039536},"_MainColor":{"type":3,"value":"(1,1,1,1)"}},"InstanceID":"3428"}

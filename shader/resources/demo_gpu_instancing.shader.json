@@ -1,0 +1,36 @@
+{
+    "layer": "geometry",
+    "properties": [
+     
+    ],
+    "passes": {
+        "base": [
+            {
+                "showface": "ccw",
+                "vs": "demo_gpu_ins",
+                "fs": "demo_gpu_ins"
+            }
+        ],
+        "base_fog": [
+            {
+                "showface": "ccw",
+                "vs": "demo_gpu_ins",
+                "fs": "demo_gpu_ins"
+            }
+        ],
+        "instance": [
+            {
+                "showface": "ccw",
+                "vs": "demo_gpu_ins",
+                "fs": "demo_gpu_ins"
+            }
+        ],
+        "instance_fog": [
+            {
+                "showface": "ccw",
+                "vs": "demo_gpu_ins",
+                "fs": "demo_gpu_ins"
+            }
+        ]
+    }
+}

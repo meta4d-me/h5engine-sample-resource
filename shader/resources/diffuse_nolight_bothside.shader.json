@@ -1,0 +1,61 @@
+{
+    "layer": "geometry",
+    "properties": [
+        "_MainTex('MainTex',Texture)='white'{}",
+        "_AlphaCut('AlphaCut',Range(0.0,1.0)) = 0.5",
+        "_MainTex_ST('MainTex_ST',Vector) = (1,1,0,0)",
+        "_MainColor ('MainColor', Color) = (1,1,1,1)"
+    ],
+    "passes": {
+
+        "base": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "base_fog": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "skin": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "skin_fog": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "lightmap": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "lightmap_fog": [
+            {
+                "showface": "all",
+                "vs": "diffuse_nolight",
+                "fs": "diffuse_nolight"
+            }
+        ],
+        "base_depth": [
+            {
+                "showface": "all",
+                "vs": "post_depth",
+                "fs": "post_depth"
+            }
+        ]
+    }
+}

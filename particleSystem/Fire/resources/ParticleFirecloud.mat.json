@@ -1,0 +1,1 @@
+{"shader":"particlesystem_additive.shader.json","srcshader":"Gd3d/particlesystem_additive","queue":0,"mapUniform":{"_TintColor":{"type":3,"value":"(0.6791044,0.6791044,0.6791044,0.6784314)"},"_MainTex":{"type":0,"value":"ParticleFirecloud.imgdesc.json"}}}

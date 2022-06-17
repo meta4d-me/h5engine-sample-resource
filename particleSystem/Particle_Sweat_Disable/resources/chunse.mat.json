@@ -1,0 +1,1 @@
+{"shader":"particlesystem_alphablended.shader.json","srcshader":"Gd3d/particlesystem_alphablended","queue":0,"mapUniform":{"_TintColor":{"type":3,"value":"(0.5,0.5,0.5,0.5)"},"_MainTex":{"type":0,"value":"chunse.imgdesc.json"}},"InstanceID":"-188426"}

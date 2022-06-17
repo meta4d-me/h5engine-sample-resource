@@ -1,0 +1,1 @@
+{"cls":"transform","insid":29640,"name":"fx_yh","localRotate":{"cls":"quaternion","x":0,"y":0,"z":0,"w":1},"localTranslate":{"cls":"vector3","x":0,"y":0,"z":0},"localScale":{"cls":"vector3","x":1,"y":1,"z":1},"gameObject":{"cls":"gameObject","layer":0,"components":[{"cls":"f14EffectSystem","f14eff":{"cls":"f14eff","value":"fx_yh.f14effect.json"},"delay":0}]}}

@@ -1,0 +1,48 @@
+{
+  "layer": "transparent",
+  "queue": 0,
+  "properties": [
+    "_MainTex('MainTex',Texture)='white'{}",
+    "_TintColor ('Tint Color', Color) = (0.5,0.5,0.5,0.5)",
+    "_UVSpeedX('UV SpeedX',float) = 0.0",
+    "_UVSpeedY('UV SpeedY',float) = 0.0"
+  ],
+  "passes": {
+    "base": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem",
+        "fs": "particlesystem"
+      }
+    ],
+    "base_fog": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem",
+        "fs": "particlesystem"
+      }
+    ],
+    "instance": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem",
+        "fs": "particlesystem"
+      }
+    ],
+    "instance_fog": [
+      {
+        "blendmode": "add",
+        "showface": "all",
+        "zwrite": "off",
+        "vs": "particlesystem",
+        "fs": "particlesystem"
+      }
+    ]
+  }
+}

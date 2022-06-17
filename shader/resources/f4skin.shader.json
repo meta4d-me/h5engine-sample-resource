@@ -1,0 +1,63 @@
+{
+    "layer": "geometry",
+    "properties": [
+        "_MainTex('MainTex',Texture)='white'{}",
+        "boneSampler('MainTex',Texture)='white'{}",
+        "boneSamplerTexelSize('boneSamplerTexelSize',float)=0.1",
+        "_AlphaCut('AlphaCut',Range(0.0,1.0)) = 0.5",
+        "_MainTex_ST('MainTex_ST',Vector) = (1,1,0,0)",
+        "_MainColor ('MainColor', Color) = (1,1,1,1)"
+    ],
+    "passes": {
+
+        "base": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "diffuse"
+            }
+        ],
+        "base_fog": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "diffuse"
+            }
+        ],
+        "skin": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "diffuse"
+            }
+        ],
+        "skin_fog": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "diffuse"
+            }
+        ],
+        "lightmap": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "f4skin"
+            }
+        ],
+        "lightmap_fog": [
+            {
+                "showface": "all",
+                "vs": "f4skin",
+                "fs": "f4skin"
+            }
+        ],
+        "base_depth": [
+            {
+                "showface": "all",
+                "vs": "post_depth",
+                "fs": "post_depth"
+            }
+        ]
+    }
+}

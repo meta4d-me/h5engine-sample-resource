@@ -1,0 +1,1 @@
+{"shader":"linetrail.shader.json","srcshader":"Gd3d/linetrail","queue":0,"mapUniform":{"_TintColor":{"type":3,"value":"(0.5,0.5,0.5,0.5)"},"_MainTex":{"type":0,"value":"SFX_Speed_Trails_Cartoon.imgdesc.json"}},"InstanceID":"3558"}
