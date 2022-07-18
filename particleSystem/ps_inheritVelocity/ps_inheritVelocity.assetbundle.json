@@ -1,14 +1,1 @@
-{
-    "files": {
-        "-1344.particlesystem.json": 190,
-        "particle.imgdesc.json": 200,
-        "particle.mat.json": 210,
-        "ps_inheritVelocity.cprefab.json": 220
-    },
-    "texs": {
-        "particle.png": 130
-    },
-    "pkg": [
-        "ps_inheritVelocity.jpkg.json"
-    ]
-}
+{"files":{"-1344.particlesystem.json":"97a841db5b44771d0a54fb10de1fb92d","particle.imgdesc.json":"c7b83b98907d5c57fda5b0daab2a8260","particle.mat.json":"e1b97785abc28b0b451b5c500e0c7ba2","ps_inheritVelocity.cprefab.json":"c615e873973d24183aafc1ea8a5adb95"},"texs":{"particle.png":"3ce271f0f5f95b3a00307b3c67263aed"},"pkg":["ps_inheritVelocity.bpkg.json","ps_inheritVelocity.jpkg.json"]}
