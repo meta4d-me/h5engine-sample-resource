@@ -19,11 +19,11 @@ uniform float specularIntensity;
 uniform float uvRepeat;
 
 uniform lowp float glstate_lightcount;
-// uniform lowp vec4 glstate_vec4_lightposs[8];
+uniform lowp vec4 glstate_vec4_lightposs[8];
 uniform lowp vec4 glstate_vec4_lightdirs[8];
-// uniform lowp float glstate_float_spotangelcoss[8];
+uniform lowp float glstate_float_spotangelcoss[8];
 uniform lowp vec4 glstate_vec4_lightcolors[8];
-// uniform lowp float glstate_float_lightrange[8];
+uniform lowp float glstate_float_lightrange[8];
 uniform lowp float glstate_float_lightintensity[8];
 
 uniform samplerCube u_env;      // IBL
@@ -86,8 +86,8 @@ vec3 toneMapACES(vec3 color) {
 
 vec2 DFGApprox(float NoV, float roughness) {
     float dotNV = clamp(NoV, 0., 1.);
-    vec4 c0 = vec4(-1, -0.0275, -0.572, 0.022);
-    vec4 c1 = vec4(1, 0.0425, 1.04, -0.04);
+    vec4 c0 = vec4(-1.0, -0.0275, -0.572, 0.022);
+    vec4 c1 = vec4(1.0, 0.0425, 1.04, -0.04);
     vec4 r = roughness * c0 + c1;
     float a004 = min(r.x * r.x, exp2(-9.28 * dotNV)) * r.x + r.y;
     return vec2(-1.04, 1.04) * a004 + r.zw;
@@ -95,7 +95,7 @@ vec2 DFGApprox(float NoV, float roughness) {
 
 // Fresnel - F0 = Metalness
 vec3 F_Schlick(float VoH, vec3 F0) {
-    return F0 + (vec3(1) - F0) * pow(1.0 - VoH, 5.0);
+    return F0 + (vec3(1.0) - F0) * pow(1.0 - VoH, 5.0);
 }
 
 // Geometric
@@ -141,7 +141,7 @@ vec3 decoRGBE(vec4 r) {
         float e = exp2(r.a * 255. - 128.);
         return vec3(r.r * e, r.g * e, r.b * e);
     }
-    return vec3(0);
+    return vec3(0.0);
 }
 
 struct st_core {
@@ -154,6 +154,11 @@ struct st_core {
     float metallic;
     float roughness;
     float alphaRoughness;
+};
+
+struct lightData{
+    vec3 L;
+    float rVal;
 };
 
 st_core init() {
@@ -172,7 +177,7 @@ st_core init() {
     vec3 f0 = vec3(0.04);
     temp.f0 = mix(f0, temp.diffuse.xyz, temp.metallic);
 
-    temp.diffuse.rgb = temp.diffuse.rgb * (vec3(1) - f0) * (1. - temp.metallic);
+    temp.diffuse.rgb = temp.diffuse.rgb * (vec3(1.) - f0) * (1. - temp.metallic);
     // temp.diffuse/=PI;
 
     temp.V = normalize(glstate_eyepos.xyz - v_pos);
@@ -186,8 +191,8 @@ st_core init() {
     return temp;
 }
 
-vec3 lightBRDF(vec3 L, st_core core) {
-    L = normalize(L);
+vec3 lightBRDF(lightData ld, st_core core) {
+    vec3 L = normalize(ld.L);
     vec3 H = normalize(core.V + L);
 
     float NoL = clamp(dot(core.N, L), 0.001, 1.0);
@@ -203,9 +208,48 @@ vec3 lightBRDF(vec3 L, st_core core) {
 
     vec3 specContrib = F * G * D / (4.0 * NoL * core.NoV);
     vec3 diffuseContrib = (1.0 - F) * core.diffuse.rgb / PI;
-    vec3 color = NoL * (diffuseContrib + specContrib);
+
+    // vec3 color = NoL * (diffuseContrib + specContrib);
+    // vec3 color = val * diffuseContrib + NoL * specContrib;
+    vec3 color = ld.rVal * (diffuseContrib + specContrib);
 
     return color;
+}
+
+//calcLight 计算灯光数据函数
+//统一三种光源的传参方式，在函数内混合，方便就不高效
+//只需要方向光时另写
+//N 世界空间法线
+//worldpos 世界空间pos
+//lightPos 光源位置,w=0 表示方向光
+//lightDir 光源方向，W=0 表示点光源，和楼上的w一起为1 表示 探照灯 spot
+//cosspot cos(a) a为spot的半径 a取值0到90度，算好cos再传进来
+lightData calcLight(vec3 N,vec3 worldpos,vec4 lightPos,vec4 lightDir,float cosspot,float range)
+{
+    lightData ld;
+
+    vec3 v3 = lightPos.xyz - worldpos;
+    float len = length(v3);
+    len = len > range ? range : len;
+    //求入射角，点光源&聚光灯
+    vec3 L = normalize(v3); 
+    //求张角 聚光灯 也是方向光入射角
+    vec3 L2 = -lightDir.xyz;
+    float dotSpot = dot(L,L2);
+    float spotVal = smoothstep(cosspot , 1.0 , dotSpot);
+    float atten = pow(1.0 - len/range , 3.0);
+
+    //光方向
+    ld.L = mix(L2 , L , lightPos.w);
+    float NoL = clamp(dot(N , ld.L) , 0.0 , 1.0);
+
+    //反射度
+    float r = NoL * atten;                       //点光 和 射灯
+    r *= mix(1.0 , spotVal , lightDir.w);        // lightDir.w = 0 点光, w = 1 射灯 (有角度约束)
+    float rDir = NoL;                            //方向光
+    ld.rVal = mix(rDir , r , lightPos.w);        //lightPos.w = 0 方向光 ，w = 1 点光 和 射灯
+
+    return ld;
 }
 
 void main() {
@@ -214,11 +258,13 @@ void main() {
     vec3 finalColor;
 
     // vec2 envBRDF    = texture2D(brdf, vec2(clamp(c.NoV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
-    int lightCount = int(min(3., glstate_lightcount));
+    // int lightCount = int(min(3., glstate_lightcount));
+    int lightCount = int(min(8., glstate_lightcount));
     if (lightCount > 0) {
         for (int i = 0; i < 8; i++) {
             if (i >= lightCount) break;
-            finalColor += lightBRDF(glstate_vec4_lightdirs[i].xyz, c) * glstate_vec4_lightcolors[i].rgb * glstate_float_lightintensity[i];
+            lightData ld = calcLight(c.N,v_pos,glstate_vec4_lightposs[i],glstate_vec4_lightdirs[i],glstate_float_spotangelcoss[i],glstate_float_lightrange[i]);
+            finalColor += lightBRDF(ld , c) * glstate_vec4_lightcolors[i].rgb * glstate_float_lightintensity[i];
         }
     }
     // finalColor += lightBRDF(light_1.xyz, c) * vec3(0.6, 0.4, 0.6) * 3.0;
@@ -254,7 +300,7 @@ void main() {
     }
 
     // finalColor += c.diffuse.rgb * lightMapColor;
-    finalColor += c.diffuse.rgb * lightMapColor * diffuseIntensity;;
+    finalColor += c.diffuse.rgb * lightMapColor * diffuseIntensity;
 #endif
 
     // finalColor += sRGBtoLINEAR(texture2D(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb;

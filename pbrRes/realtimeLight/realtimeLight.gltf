@@ -149,13 +149,29 @@
       "name": "Main Camera"
     }
   ],
+  "images": [
+    {
+      "uri": "Assets/RongGallery/Textures/floor_wood_nm.png",
+      "name": "floor_wood_nm"
+    },
+    {
+      "uri": "Assets/RongGallery/Textures/floor_wood.png",
+      "name": "floor_wood"
+    }
+  ],
   "materials": [
     {
       "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
         "metallicFactor": 0.0,
-        "roughnessFactor": 0.5
+        "roughnessFactor": 0.31000000238418579
       },
-      "name": "Default-Material"
+      "normalTexture": {
+        "index": 0
+      },
+      "name": "002"
     }
   ],
   "meshes": [
@@ -202,18 +218,18 @@
     },
     {
       "mesh": 0,
-      "translation": [
-        0.0,
-        3.0,
-        0.0
+      "scale": [
+        2.0,
+        2.0,
+        2.0
       ],
       "name": "Cube"
     },
     {
       "translation": [
         1.39,
-        3.72,
-        -1.66
+        0.02,
+        -4.8
       ],
       "name": "Point Light"
     },
@@ -225,11 +241,16 @@
         0.624072731
       ],
       "translation": [
-        1.72,
-        4.96,
+        2.53,
+        2.32,
         0.04
       ],
       "name": "Spot Light"
+    }
+  ],
+  "samplers": [
+    {
+      "minFilter": 9985
     }
   ],
   "scene": 0,
@@ -249,7 +270,7 @@
             {
               "type": 0,
               "shadowQuality": 0,
-              "intensity": 0.7,
+              "intensity": 0.61,
               "color": [
                 1.0,
                 0.956862748,
@@ -258,10 +279,16 @@
               "angles": [
                 9.329286,
                 228.787979
+              ],
+              "pos": [
+                0.0,
+                3.0,
+                0.0
               ]
             },
             {
               "type": 1,
+              "range": 10,
               "shadowQuality": -1,
               "intensity": 1.0,
               "color": [
@@ -272,12 +299,19 @@
               "angles": [
                 0.0,
                 0.0
+              ],
+              "pos": [
+                -1.39,
+                0.02,
+                -4.8
               ]
             },
             {
               "type": 2,
+              "range": 10,
+              "spotAngle": 30,
               "shadowQuality": 0,
-              "intensity": 1.71,
+              "intensity": 1.48,
               "color": [
                 1.0,
                 0.21226418,
@@ -286,11 +320,28 @@
               "angles": [
                 33.90841,
                 90.0
+              ],
+              "pos": [
+                -2.53,
+                2.32,
+                0.04
               ]
             }
           ]
         }
       }
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "name": "floor_wood_nm"
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "name": "floor_wood"
     }
   ]
 }
