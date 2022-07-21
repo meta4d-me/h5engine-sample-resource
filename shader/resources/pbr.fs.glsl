@@ -136,12 +136,13 @@ float D_GGX(float a, float NoH) {
 // }
 
 // decode RGBE data after LOD due to RGB32F mipmap issue
-vec3 decoRGBE(vec4 r) {
-    if(r.a != 0.) {
-        float e = exp2(r.a * 255. - 128.);
+ vec3 decoRGBE(vec4 r) {
+    if(r.a != 0. && r.a <= 0.7372549019607844) {    //判读 0.7372 避免 expVal > 60 后出现问题。 
+        float expVal = r.a * 255. - 128.;
+        float e = exp2(expVal);
         return vec3(r.r * e, r.g * e, r.b * e);
     }
-    return vec3(0.0);
+    return  vec3(0.0);
 }
 
 struct st_core {
@@ -205,12 +206,13 @@ vec3 lightBRDF(lightData ld, st_core core) {
     vec3 F = F_Schlick(VoH, core.f0);
     float G = G_UE4(core.NoV, NoH, VoH, NoL, core.roughness);
     float D = D_GGX(core.alphaRoughness, NoH);
-
+    
+    //直接光照(镜面反射)
     vec3 specContrib = F * G * D / (4.0 * NoL * core.NoV);
+    //间接光照(漫反射)
     vec3 diffuseContrib = (1.0 - F) * core.diffuse.rgb / PI;
 
     // vec3 color = NoL * (diffuseContrib + specContrib);
-    // vec3 color = val * diffuseContrib + NoL * specContrib;
     vec3 color = ld.rVal * (diffuseContrib + specContrib);
 
     return color;
@@ -255,37 +257,40 @@ lightData calcLight(vec3 N,vec3 worldpos,vec4 lightPos,vec4 lightDir,float cossp
 void main() {
     st_core c = init();
     float lod = clamp(c.roughness * 10.0, 0.0, 11.0);
-    vec3 finalColor;
+    vec3 directL;
 
+    //实时灯光 直接光照 照明贡献计算----------------------------
     // vec2 envBRDF    = texture2D(brdf, vec2(clamp(c.NoV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
     // int lightCount = int(min(3., glstate_lightcount));
-    int lightCount = int(min(8., glstate_lightcount));
+    int lightCount = int(glstate_lightcount);
     if (lightCount > 0) {
         for (int i = 0; i < 8; i++) {
             if (i >= lightCount) break;
             lightData ld = calcLight(c.N,v_pos,glstate_vec4_lightposs[i],glstate_vec4_lightdirs[i],glstate_float_spotangelcoss[i],glstate_float_lightrange[i]);
-            finalColor += lightBRDF(ld , c) * glstate_vec4_lightcolors[i].rgb * glstate_float_lightintensity[i];
+            directL += lightBRDF(ld , c) * glstate_vec4_lightcolors[i].rgb * glstate_float_lightintensity[i];
         }
     }
-    // finalColor += lightBRDF(light_1.xyz, c) * vec3(0.6, 0.4, 0.6) * 3.0;
-    // finalColor += lightBRDF(light_2.xyz - v_pos, c) * vec3(0.6, 0.6, 0.4);
-    // finalColor += ((1.0 - F) * (1.0 - c.Metallic) * c.Basecolor.rgb + indirectSpecular) * c.AO.rgb; // IBL+PBR
 
-    // vec3 brdf = sRGBtoLINEAR(texture2D(brdf, clamp(vec2(c.NoV, 1. - c.roughness), vec2(0), vec2(1)))).rgb;
+    //环境 间接光照 照明贡献计算----------------------------
     vec2 brdf = DFGApprox(c.NoV, c.roughness);
+    //镜面反射
     #ifdef TEXTURE_LOD
         vec3 IBLColor = decoRGBE(textureCubeLodEXT(u_env, c.R, lod));
     #else
         vec3 IBLColor = decoRGBE(textureCube(u_env, c.R));
     #endif
     vec3 IBLspecular = 1.0 * IBLColor * (c.f0 * brdf.x + brdf.y);
-    finalColor += IBLspecular * specularIntensity;
+    vec3 indirectSpec = IBLspecular * specularIntensity;
 
+    //漫反射
     #ifdef TEXTURE_LOD
-        finalColor += c.diffuse.rgb * decoRGBE(textureCubeLodEXT(u_diffuse, c.R, lod)) * diffuseIntensity;
+        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureCubeLodEXT(u_diffuse, c.R, lod)) * diffuseIntensity;
     #else
-        finalColor += c.diffuse.rgb * decoRGBE(textureCube(u_diffuse, c.R)) * diffuseIntensity;
+        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureCube(u_diffuse, c.R)) * diffuseIntensity;
     #endif
+
+    //照明合并
+    vec3 finalColor = directL + indirectSpec + indirectDiff;
 
 #ifdef LIGHTMAP
     //有lightMap 时，用lightmap 贡献一部分 间接光照
@@ -306,6 +311,7 @@ void main() {
     // finalColor += sRGBtoLINEAR(texture2D(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb;
     finalColor *= u_Exposure * texture2D(uv_AO, xlv_TEXCOORD0 * uvRepeat).r;
 
+    //色调映射 （HDR -> LDR）
     finalColor = toneMapACES(finalColor);
 
 #ifdef FOG
