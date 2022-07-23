@@ -1,7 +1,7 @@
 attribute highp vec3    _glesVertex;
 attribute mediump vec2    _glesMultiTexCoord0;
 attribute highp vec3    _glesNormal;
-attribute highp vec3    _glesTangent;
+attribute highp vec3    _glesTangent;	//w 被乘到了分量里 x = x*w , y = y*w , z = z*w , 且 w 被做了 +2 的偏移映射。
 attribute highp vec3    _glesColor;
 
 uniform highp mat4      glstate_matrix_mvp;
@@ -68,6 +68,11 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 }
 #endif
 
+//获取 tangent 的 W 值
+lowp float tangentW(lowp vec3 _tangent){
+	return sqrt(_tangent.x * _tangent.x + _tangent.y * _tangent.y + _tangent.z * _tangent.z) - 2.0;
+}
+
 void main () {
     highp vec4 position = vec4(_glesVertex,1.0);
 
@@ -89,7 +94,7 @@ void main () {
 
 	// TBN
 	vec3 tangent = normalize((glstate_matrix_it_modelview * vec4(_glesTangent, 0.0)).xyz);
-	vec3 bitangent = cross(v_normal, tangent);// * _glesTangent.w;
+	vec3 bitangent = cross(v_normal, tangent) * tangentW(_glesTangent);// * _glesTangent.w;
 	TBN = mat3(tangent, bitangent, v_normal);
 
 	position = glstate_matrix_mvp * position;
