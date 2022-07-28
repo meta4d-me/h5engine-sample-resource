@@ -8,7 +8,6 @@ uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;
 uniform highp mat4      glstate_matrix_it_modelview;
 
-varying highp vec3      v_normal;
 varying highp vec3      v_pos;
 varying highp vec2      xlv_TEXCOORD0;
 varying highp mat3		TBN;
@@ -27,6 +26,7 @@ varying lowp float factor;
 #endif
 
 #ifdef SKIN
+mat4 blendMat ;
 attribute lowp vec4 _glesBlendIndex4;
 attribute lowp vec4 _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
@@ -60,17 +60,38 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 	int i3 =int(blendIndex.z);
 	int i4 =int(blendIndex.w);
 
-    mat4 mat = buildMat4(i)*blendWeight.x
+    blendMat = buildMat4(i)*blendWeight.x
 			 + buildMat4(i2)*blendWeight.y
 			 + buildMat4(i3)*blendWeight.z
 			 + buildMat4(i4)*blendWeight.w;
-	return mat* srcVertex;
+	return blendMat* srcVertex;
 }
 #endif
 
 //获取 tangent 的 W 值
 lowp float tangentW(lowp vec3 _tangent){
 	return sqrt(_tangent.x * _tangent.x + _tangent.y * _tangent.y + _tangent.z * _tangent.z) - 2.0;
+}
+
+//计算 TBN 矩阵-----------------
+mat3 calTBNMatrix(highp mat4 _m_mat,lowp vec3 _normal,lowp vec3 _tangent)
+{
+
+    vec3 normal = normalize(mat3(_m_mat) * normalize(_normal));
+    vec3 tangent = normalize(mat3(_m_mat) * normalize(_tangent));
+    vec3 binormal = cross( normal , tangent) * tangentW(_tangent);
+  	return mat3(tangent,binormal,normal);
+}
+//-----------------------------
+
+void calcNormal(highp vec4 pos){
+    //求世界空间法线
+#ifdef SKIN
+    vec3 _n = normalize(mat3(blendMat) * _glesNormal);
+#else
+    vec3 _n = _glesNormal;
+#endif
+	TBN = calTBNMatrix(glstate_matrix_it_modelview , _n , _glesTangent);
 }
 
 void main () {
@@ -84,18 +105,22 @@ void main () {
 #endif
 
 #ifdef SKIN
-    position =calcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
+    position = calcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
 #endif
-
+	//normal
+	calcNormal(position);
+	//world pos
     vec4 wpos		= (glstate_matrix_model * position);
 	v_pos			= wpos.xyz / wpos.w;
-    v_normal        = normalize((glstate_matrix_it_modelview * vec4(_glesNormal, 0.0)).xyz);
-    xlv_TEXCOORD0   = _glesMultiTexCoord0;
+    //texcoord
+	xlv_TEXCOORD0   = _glesMultiTexCoord0;
 
-	// TBN
-	vec3 tangent = normalize((glstate_matrix_it_modelview * vec4(_glesTangent, 0.0)).xyz);
-	vec3 bitangent = cross(v_normal, tangent) * tangentW(_glesTangent);// * _glesTangent.w;
-	TBN = mat3(tangent, bitangent, v_normal);
+	// // TBN
+    // vec3 N        	= normalize((glstate_matrix_it_modelview * vec4(_glesNormal, 0.0)).xyz);
+	// vec3 tangent 	= normalize((glstate_matrix_it_modelview * vec4(_glesTangent, 0.0)).xyz);
+	// vec3 bitangent 	= cross(N, tangent) * tangentW(_glesTangent);// * _glesTangent.w;
+	// TBN = mat3(tangent, bitangent, N);
+	// TBN = calTBNMatrix(glstate_matrix_it_modelview , _glesNormal , _glesTangent);
 
 	position = glstate_matrix_mvp * position;
 

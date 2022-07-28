@@ -21,6 +21,20 @@
                 "vs": "simple",
                 "fs": "simple"
             }
+        ],
+        "skin": [
+            {
+                "showface": "ccw",
+                "vs": "simple",
+                "fs": "simple"
+            }
+        ],
+        "skin_fog": [
+            {
+                "showface": "ccw",
+                "vs": "simple",
+                "fs": "simple"
+            }
         ]
     }
 }

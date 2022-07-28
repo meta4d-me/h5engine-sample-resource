@@ -47,7 +47,6 @@ uniform float CustomRoughness;
 #define TEX_FORMAT_METALLIC     rgb
 #define TEX_FORMAT_ROUGHNESS    a
 
-varying vec3 v_normal;
 varying vec3 v_pos;
 varying vec2 xlv_TEXCOORD0;
 varying mat3 TBN;
@@ -291,6 +290,7 @@ void main() {
 
     //照明合并
     vec3 finalColor = directL + indirectSpec + indirectDiff;
+    // vec3 finalColor = c.N;
 
 #ifdef LIGHTMAP
     //有lightMap 时，用lightmap 贡献一部分 间接光照
