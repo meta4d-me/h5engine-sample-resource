@@ -17,6 +17,7 @@ precision mediump float;
 uniform float diffuseIntensity;
 uniform float specularIntensity;
 uniform float uvRepeat;
+uniform float alphaCutoff;      //alphaCutoff
 
 uniform lowp float glstate_lightcount;
 uniform lowp vec4 glstate_vec4_lightposs[8];
@@ -254,6 +255,12 @@ lightData calcLight(vec3 N,vec3 worldpos,vec4 lightPos,vec4 lightDir,float cossp
 }
 
 void main() {
+    //alpha Test
+    vec4 baseTex = texture2D(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat);
+    if(baseTex.a < alphaCutoff){
+        discard;
+    }
+
     st_core c = init();
     float lod = clamp(c.roughness * 10.0, 0.0, 11.0);
     vec3 directL;
