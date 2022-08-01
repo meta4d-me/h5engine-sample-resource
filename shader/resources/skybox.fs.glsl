@@ -11,7 +11,7 @@ uniform samplerCube u_sky;
 uniform vec4        glstate_eyepos;
 uniform float       u_Exposure;
 
-varying vec3        v_pos;
+varying vec3        TexCoords;
 
 vec3 decoRGBE(vec4 r) {
     if(r.a != 0.) {
@@ -31,5 +31,5 @@ vec3 toneMapACES(vec3 color) {
 }
 
 void main () {
-    gl_FragColor = vec4(toneMapACES(u_Exposure * decoRGBE(textureCube(u_sky, normalize(v_pos - glstate_eyepos.xyz)))), 1);
+    gl_FragColor = vec4(toneMapACES(u_Exposure * decoRGBE(textureCube(u_sky, TexCoords))), 1.0);
 }

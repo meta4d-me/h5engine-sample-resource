@@ -6,19 +6,21 @@
     "passes": {
         "base": [
             {
+                "zwrite": "off",
+                "ztest":"on",
                 "showface": "all",
                 "vs": "skybox",
                 "fs": "skybox"
             }
         ],
         "base_fog": [
-
-        ],
-        "skin": [
-
-        ],
-        "skin_fog": [
-
+            {
+                "zwrite": "off",
+                "ztest":"on",
+                "showface": "all",
+                "vs": "skybox",
+                "fs": "skybox"
+            }
         ],
         "shadowgen": [],
         "bone": [],

@@ -1,12 +1,15 @@
+//参考 https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/06%20Cubemaps/
+
 attribute highp vec3    _glesVertex;
 
-uniform highp mat4      glstate_matrix_mvp;
-uniform highp mat4      glstate_matrix_model;
+uniform highp mat4      glstate_matrix_view;
+uniform highp mat4      glstate_matrix_project;
 
-varying highp vec3      v_pos;
+varying highp vec3      TexCoords;
 
 void main () {
-    v_pos           = (glstate_matrix_model * vec4(_glesVertex, 1.0)).xyz;
-
-    gl_Position     = glstate_matrix_mvp * vec4(_glesVertex, 1.0);
+    vec3 cubePos = _glesVertex * -2.0;  //因我们的 默认box mesh size为1, 需要加系数 -2.0
+    TexCoords   = cubePos;
+    vec4 pos =  glstate_matrix_project * mat4(mat3(glstate_matrix_view))  * vec4(cubePos, 1.0);
+    gl_Position = pos.xyww;
 }
