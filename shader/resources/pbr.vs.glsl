@@ -1,34 +1,36 @@
-attribute highp vec3    _glesVertex;
-attribute mediump vec2    _glesMultiTexCoord0;
-attribute highp vec3    _glesNormal;
-attribute highp vec3    _glesTangent;	//w 被乘到了分量里 x = x*w , y = y*w , z = z*w , 且 w 被做了 +2 的偏移映射。
-attribute highp vec3    _glesColor;
+#version    300 es
+
+in highp vec3    _glesVertex;
+in mediump vec2    _glesMultiTexCoord0;
+in highp vec3    _glesNormal;
+in highp vec3    _glesTangent;	//w 被乘到了分量里 x = x*w , y = y*w , z = z*w , 且 w 被做了 +2 的偏移映射。
+in highp vec3    _glesColor;
 
 uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;
 uniform highp mat4      glstate_matrix_it_modelview;
 
-varying highp vec3      v_pos;
-varying highp vec2      xlv_TEXCOORD0;
-varying highp mat3		TBN;
+out highp vec3      v_pos;
+out highp vec2      xlv_TEXCOORD0;
+out highp mat3		TBN;
 
 #ifdef LIGHTMAP
-attribute mediump vec2 _glesMultiTexCoord1;
+in mediump vec2 _glesMultiTexCoord1;
 uniform lowp float glstate_lightmapUV;
 uniform mediump vec4 glstate_lightmapOffset;
-varying mediump vec2 lightmap_TEXCOORD;
+out mediump vec2 lightmap_TEXCOORD;
 #endif
 
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 #ifdef SKIN
 mat4 blendMat ;
-attribute lowp vec4 _glesBlendIndex4;
-attribute lowp vec4 _glesBlendWeight4;
+in lowp vec4 _glesBlendIndex4;
+in lowp vec4 _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {

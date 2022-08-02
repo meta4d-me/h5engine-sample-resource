@@ -1,7 +1,10 @@
-#extension GL_OES_standard_derivatives : enable
-#ifdef TEXTURE_LOD
-#extension GL_EXT_shader_texture_lod : enable
-#endif
+#version 300 es
+
+// #ifdef TEXTURE_LOD
+// #extension GL_EXT_shader_texture_lod : enable
+// #endif
+
+#define TEXTURE_LOD
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -48,14 +51,16 @@ uniform float CustomRoughness;
 #define TEX_FORMAT_METALLIC     rgb
 #define TEX_FORMAT_ROUGHNESS    a
 
-varying vec3 v_pos;
-varying vec2 xlv_TEXCOORD0;
-varying mat3 TBN;
+in vec3 v_pos;
+in vec2 xlv_TEXCOORD0;
+in mat3 TBN;
+
+out vec4 color;
 
 #ifdef LIGHTMAP
 uniform lowp float glstate_lightmapRGBAF16;
 uniform lowp sampler2D _LightmapTex;
-varying mediump vec2 lightmap_TEXCOORD;
+in mediump vec2 lightmap_TEXCOORD;
 lowp vec3 decode_hdr(lowp vec4 data)
 {
     lowp float power =pow( 2.0 ,data.a * 255.0 - 128.0);
@@ -65,7 +70,7 @@ lowp vec3 decode_hdr(lowp vec4 data)
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color;
-varying lowp float factor;
+in lowp float factor;
 #endif
 
 vec4 sRGBtoLINEAR(vec4 color) {
@@ -166,14 +171,14 @@ st_core init() {
     st_core temp;
 
     // PBR Material
-    temp.diffuse = (sRGBtoLINEAR(texture2D(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat)) * CustomBasecolor);
+    temp.diffuse = (sRGBtoLINEAR(texture(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat)) * CustomBasecolor);
 
-    vec3 rm = texture2D(uv_MetallicRoughness, xlv_TEXCOORD0 * uvRepeat).rgb;
+    vec3 rm = texture(uv_MetallicRoughness, xlv_TEXCOORD0 * uvRepeat).rgb;
     temp.roughness = clamp(rm.g, 0.04, 1.0) * CustomRoughness;
     temp.alphaRoughness = temp.roughness * temp.roughness;
     temp.metallic = clamp(rm.b, 0.0, 1.0) * CustomMetallic;
 
-    // vec4 AO = sRGBtoLINEAR(texture2D(uv_AO, xlv_TEXCOORD0 * uvRepeat));
+    // vec4 AO = sRGBtoLINEAR(texture(uv_AO, xlv_TEXCOORD0 * uvRepeat));
 
     vec3 f0 = vec3(0.04);
     temp.f0 = mix(f0, temp.diffuse.xyz, temp.metallic);
@@ -183,7 +188,7 @@ st_core init() {
 
     temp.V = normalize(glstate_eyepos.xyz - v_pos);
     // mat3 TBN = cotangent_frame(temp.N, temp.V, xlv_TEXCOORD0 * uvRepeat);
-    vec3 normalAddation = texture2D(uv_Normal, xlv_TEXCOORD0 * uvRepeat).rgb * 2. - 1.;
+    vec3 normalAddation = texture(uv_Normal, xlv_TEXCOORD0 * uvRepeat).rgb * 2. - 1.;
     temp.N = normalize(TBN * normalAddation);
 
     temp.NoV = clamp(abs(dot(temp.N, temp.V)), 0.001, 1.0);
@@ -256,7 +261,7 @@ lightData calcLight(vec3 N,vec3 worldpos,vec4 lightPos,vec4 lightDir,float cossp
 
 void main() {
     //alpha Test
-    vec4 baseTex = texture2D(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat);
+    vec4 baseTex = texture(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat);
     if(baseTex.a < alphaCutoff){
         discard;
     }
@@ -266,7 +271,7 @@ void main() {
     vec3 directL;
 
     //实时灯光 直接光照 照明贡献计算----------------------------
-    // vec2 envBRDF    = texture2D(brdf, vec2(clamp(c.NoV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
+    // vec2 envBRDF    = texture(brdf, vec2(clamp(c.NoV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
     // int lightCount = int(min(3., glstate_lightcount));
     int lightCount = int(glstate_lightcount);
     if (lightCount > 0) {
@@ -281,18 +286,20 @@ void main() {
     vec2 brdf = DFGApprox(c.NoV, c.roughness);
     //镜面反射
     #ifdef TEXTURE_LOD
-        vec3 IBLColor = decoRGBE(textureCubeLodEXT(u_env, c.R, lod));
+        // vec3 IBLColor = decoRGBE(textureCubeLodEXT(u_env, c.R, lod));
+        vec3 IBLColor = decoRGBE(textureLod(u_env, c.R, lod));
     #else
-        vec3 IBLColor = decoRGBE(textureCube(u_env, c.R));
+        vec3 IBLColor = decoRGBE(texture(u_env, c.R));
     #endif
     vec3 IBLspecular = 1.0 * IBLColor * (c.f0 * brdf.x + brdf.y);
     vec3 indirectSpec = IBLspecular * specularIntensity;
 
     //漫反射
     #ifdef TEXTURE_LOD
-        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureCubeLodEXT(u_diffuse, c.R, lod)) * diffuseIntensity;
+        // vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureCubeLodEXT(u_diffuse, c.R, lod)) * diffuseIntensity;
+        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureLod(u_diffuse, c.R, lod)) * diffuseIntensity;
     #else
-        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(textureCube(u_diffuse, c.R)) * diffuseIntensity;
+        vec3 indirectDiff = c.diffuse.rgb * decoRGBE(texture(u_diffuse, c.R)) * diffuseIntensity;
     #endif
 
     //照明合并
@@ -301,7 +308,7 @@ void main() {
 
 #ifdef LIGHTMAP
     //有lightMap 时，用lightmap 贡献一部分 间接光照
-    vec4 lightmap = texture2D(_LightmapTex, lightmap_TEXCOORD);
+    vec4 lightmap = texture(_LightmapTex, lightmap_TEXCOORD);
     vec3 lightMapColor;
     if(glstate_lightmapRGBAF16 == 1.0){
         // finalColor.xyz *= lightmap.xyz;
@@ -315,8 +322,8 @@ void main() {
     finalColor += c.diffuse.rgb * lightMapColor * diffuseIntensity;
 #endif
 
-    // finalColor += sRGBtoLINEAR(texture2D(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb;
-    finalColor *= u_Exposure * texture2D(uv_AO, xlv_TEXCOORD0 * uvRepeat).r;
+    // finalColor += sRGBtoLINEAR(texture(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb;
+    finalColor *= u_Exposure * texture(uv_AO, xlv_TEXCOORD0 * uvRepeat).r;
 
     //色调映射 （HDR -> LDR）
     finalColor = toneMapACES(finalColor);
@@ -324,5 +331,7 @@ void main() {
 #ifdef FOG
     finalColor.xyz = mix(glstate_fog_color.rgb, finalColor.rgb, factor);
 #endif
-    gl_FragColor = vec4(finalColor, c.diffuse.a);
+
+    // gl_FragColor = vec4(finalColor, c.diffuse.a);
+    color = vec4(finalColor, c.diffuse.a);
 }

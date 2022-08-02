@@ -1,14 +1,16 @@
-attribute highp vec3    _glesVertex;
-attribute highp vec2    _glesMultiTexCoord0;
-attribute highp vec3    _glesNormal;
+#version 300 es
+
+in highp vec3    _glesVertex;
+in highp vec2    _glesMultiTexCoord0;
+in highp vec3    _glesNormal;
 
 uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;
 uniform highp mat4      glstate_matrix_world2object;
 
-varying highp vec3      v_normal;
-varying highp vec3      v_pos;
-varying highp vec2      xlv_TEXCOORD0;
+out highp vec3      v_normal;
+out highp vec3      v_pos;
+out highp vec2      xlv_TEXCOORD0;
 
 void main () {
     v_pos           = (glstate_matrix_model * vec4(_glesVertex, 1.0)).xyz;
