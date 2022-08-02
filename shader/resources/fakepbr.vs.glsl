@@ -1,16 +1,20 @@
-attribute highp vec4 _glesVertex;
-attribute mediump vec2 _glesMultiTexCoord0;
-attribute lowp vec3 _glesTangent;
-attribute lowp vec3 _glesNormal;
+#version 300 es
+
+precision mediump float;
+
+in highp vec4 _glesVertex;
+in mediump vec2 _glesMultiTexCoord0;
+in lowp vec3 _glesTangent;
+in lowp vec3 _glesNormal;
 uniform highp mat4 glstate_matrix_model;
 uniform highp mat4 glstate_matrix_mvp;
 uniform mediump vec4 _MainTex_ST; 
 
-varying mediump vec2 xlv_TEXCOORD0;
-varying highp vec3 posWorld;
-varying lowp vec3 normalDir;
-varying lowp vec3 tangentDir;
-varying lowp vec3 bitangentDir;
+out mediump vec2 xlv_TEXCOORD0;
+out highp vec3 posWorld;
+out lowp vec3 normalDir;
+out lowp vec3 tangentDir;
+out lowp vec3 bitangentDir;
 void main()
 {
     xlv_TEXCOORD0 = _glesMultiTexCoord0.xy * _MainTex_ST.xy + _MainTex_ST.zw; 

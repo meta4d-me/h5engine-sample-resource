@@ -1,3 +1,7 @@
+#version 300 es
+
+precision mediump float;
+
 uniform lowp sampler2D _MainTex;
 
 
@@ -5,10 +9,10 @@ uniform lowp vec4 glstate_vec4_lightposs[8];
 uniform lowp vec4 glstate_vec4_lightdirs[8];
 uniform lowp float glstate_float_spotangelcoss[8];
 
-varying highp vec3 vWorldpos;
-varying lowp vec3 vNormal;
-varying mediump vec2 xlv_TEXCOORD0;
-varying lowp vec3 vEyepos;
+in highp vec3 vWorldpos;
+in lowp vec3 vNormal;
+in mediump vec2 xlv_TEXCOORD0;
+in lowp vec3 vEyepos;
 
 //texture2DEtC1Mark
 
@@ -60,6 +64,7 @@ lowp float calSpec(lowp vec3 worldpos,lowp vec4 lightPos,lowp vec4 lightDir)
     lowp float spec=specularLight;
     return spec;
 }
+out vec4 color; 
 void main() 
 {
     lowp float diff=0.0;
@@ -75,14 +80,14 @@ void main()
     lowp vec4 col_1;    
     lowp vec4 prev_2;
     lowp vec4 tmpvar_3;
-    tmpvar_3 = (xlv_COLOR * texture2D(_MainTex, xlv_TEXCOORD0));
+    tmpvar_3 = (xlv_COLOR * texture(_MainTex, xlv_TEXCOORD0));
 
     prev_2 = tmpvar_3;
     lowp vec4 tmpvar_4;
     tmpvar_4 = mix(vec4(1.0, 1.0, 1.0, 1.0), prev_2, prev_2.wwww);
     col_1 = tmpvar_4;
     
-   gl_FragData[0] = col_1;
-    //gl_FragData[0]=vec4(specularColor,1.0);
-    //gl_FragData[0] = xlv_COLOR;
+   color = col_1;
+    //color=vec4(specularColor,1.0);
+    //color = xlv_COLOR;
 }

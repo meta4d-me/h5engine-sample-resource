@@ -1,3 +1,5 @@
+#version 300 es
+
 precision mediump  float;
 
 #define PI 3.14159265358979
@@ -14,16 +16,16 @@ uniform samplerCube u_sky_4;// IBL
 uniform lowp vec4 _MainColor;
 uniform vec4 glstate_eyepos;
 
-varying vec3 v_pos;
-varying mediump vec2 xlv_TEXCOORD0;
-varying highp vec4 v_color;
+in vec3 v_pos;
+in mediump vec2 xlv_TEXCOORD0;
+in highp vec4 v_color;
 
-varying vec3 v_normal;
-varying mat3 TBN;
+in vec3 v_normal;
+in mat3 TBN;
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color;
-varying lowp float factor;
+in lowp float factor;
 #endif
 
 #define fixedAmbient    vec4(1, 1, 1, 1.0)
@@ -82,11 +84,12 @@ float D_GGX(float a, float NoH) {
     return a / (PI * f * f);
 }
 
+out vec4 color; 
 void main()
 {
-    //gl_FragData[0] = v_color;
+    //color = v_color;
 
-    vec4 base = sRGBtoLINEAR(texture2D(uv_Basecolor, xlv_TEXCOORD0));
+    vec4 base = sRGBtoLINEAR(texture(uv_Basecolor, xlv_TEXCOORD0));
     // vec4 base = sRGBtoLINEAR(vec4(0.8, 0.69, 0.13,1));
     // if(base.a < 0.1)
     //     discard;
@@ -94,7 +97,7 @@ void main()
 
 
     vec4 fristColor = vec4(v_color.rgb, 1);
-    vec3 normalAddation = texture2D(uv_Normal, xlv_TEXCOORD0).rgb * 2.0 - 1.0;
+    vec3 normalAddation = texture(uv_Normal, xlv_TEXCOORD0).rgb * 2.0 - 1.0;
 
     vec3 L = normalize(LIGHT_DIRECTION);
     vec3 N = normalize(TBN * normalAddation);
@@ -127,28 +130,28 @@ void main()
 
     vec3 specContrib = F * G * D / (4.0 * NoL * NoV);
     vec3 diffuseContrib = (1.0 - F) * diffuse * (1.0 - metallic);
-    vec3 color = NoL * LIGHT_COLOR.xyz * (diffuseContrib + specContrib * 10.0);
+    vec3 _color = NoL * LIGHT_COLOR.xyz * (diffuseContrib + specContrib * 10.0);
     // color += fixedAmbient.rgb * 0.3;
 
 
     // IBL
-    vec3 brdf = sRGBtoLINEAR(texture2D(brdf, vec2(NoV, 1.0 - alphaRoughness))).rgb;
+    vec3 brdf = sRGBtoLINEAR(texture(brdf, vec2(NoV, 1.0 - alphaRoughness))).rgb;
     // vec3 IBLcolor = vec3(1);
     vec3 IBLcolor = vec3(1, 0.6, 0);
-    // vec3 IBLcolor = sRGBtoLINEAR(textureCube(envTex, R)).rgb + vec3(0.5);
+    // vec3 IBLcolor = sRGBtoLINEAR(texture(envTex, R)).rgb + vec3(0.5);
 
     vec3 IBLspecular = 1.0 * IBLcolor * (f0 * brdf.x + brdf.y);
-    color += IBLspecular;
-    color += IBLspecular;
-    color += IBLspecular;
-    color += IBLspecular;
+    _color += IBLspecular;
+    _color += IBLspecular;
+    _color += IBLspecular;
+    _color += IBLspecular;
     // color += IBLspecular;
     // color += IBLspecular;
     // color += IBLspecular;
 
 
     // Diffuse
-    vec4 emission = (fristColor * vec4(color, 1)) + (fristColor * fixedAmbient);
+    vec4 emission = (fristColor * vec4(_color, 1)) + (fristColor * fixedAmbient);
 
 
 
@@ -157,12 +160,12 @@ void main()
     //emission.xyz = mix(glstate_fog_color.rgb, emission.rgb, v_color.a);
     #endif
 
-    gl_FragData[0] = LINEARtoSRGB(emission);
-    gl_FragData[0] = LINEARtoSRGB(vec4(V, 1));
-    gl_FragData[0] = LINEARtoSRGB(vec4(color, 1));
-    // gl_FragData[0] = LINEARtoSRGB(vec4(IBLspecular * 2.0, 1));
-    // gl_FragData[0] = LINEARtoSRGB(vec4(pow(1.0 - NoV, 5.0)));
-    // gl_FragData[0] = LINEARtoSRGB(vec4(G));
-    // gl_FragData[0] = LINEARtoSRGB(vec4(G));
-    // gl_FragData[0] = LINEARtoSRGB(vec4(D));
+    // color = LINEARtoSRGB(emission);
+    // color = LINEARtoSRGB(vec4(V, 1));
+    color = LINEARtoSRGB(vec4(_color,1.0));
+    // color = LINEARtoSRGB(vec4(IBLspecular * 2.0, 1));
+    // color = LINEARtoSRGB(vec4(pow(1.0 - NoV, 5.0)));
+    // color = LINEARtoSRGB(vec4(G));
+    // color = LINEARtoSRGB(vec4(G));
+    // color = LINEARtoSRGB(vec4(D));
 }

@@ -1,26 +1,28 @@
+#version 300 es
+
 precision highp float;
 
-attribute highp vec4 _glesVertex;
-attribute mediump vec4 _glesMultiTexCoord0;
-attribute highp vec4 _glesColor;
+in highp vec4 _glesVertex;
+in mediump vec4 _glesMultiTexCoord0;
+in highp vec4 _glesColor;
 
 uniform highp mat4 glstate_matrix_mvp;
 uniform mediump vec4 _MainTex_ST;
-// varying mediump vec2 xlv_TEXCOORD0;
+// out mediump vec2 xlv_TEXCOORD0;
 
 // #ifdef LIGHTMAP
-// attribute mediump vec4 _glesMultiTexCoord1;
+// in mediump vec4 _glesMultiTexCoord1;
 // uniform mediump vec4 glstate_lightmapOffset;
 // // uniform mediump float glstate_lightmapUV;
-// varying mediump vec2 lightmap_TEXCOORD;
+// out mediump vec2 lightmap_TEXCOORD;
 // #endif
 
 
 // NOTE: diffuse cap
-varying lowp vec3 v_N;
-varying lowp vec3 v_Mpos;
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 lightmap_TEXCOORD;
+out lowp vec3 v_N;
+out lowp vec3 v_Mpos;
+out mediump vec2 xlv_TEXCOORD0;
+out mediump vec2 lightmap_TEXCOORD;
 
 
 //texture2DEtC1Mark
@@ -29,15 +31,15 @@ varying mediump vec2 lightmap_TEXCOORD;
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 #define SKIN2
-
 #define SKIN
+
 #ifdef SKIN
-attribute lowp vec4 _glesBlendIndex4;
-attribute lowp vec4 _glesBlendWeight4;
+in lowp vec4 _glesBlendIndex4;
+in lowp vec4 _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 
 #ifdef SKIN2
@@ -49,10 +51,10 @@ uniform highp vec4 boneSampler_TexelSize;
 mat4 readMatrixSampler(sampler2D smp, float index) {
     float offset = index * 4.;
     return mat4(
-		texture2D(smp, vec2(boneSamplerTexelSize * (offset + 0.5), 0)),
-		texture2D(smp, vec2(boneSamplerTexelSize * (offset + 1.5), 0)),
-		texture2D(smp, vec2(boneSamplerTexelSize * (offset + 2.5), 0)),
-		texture2D(smp, vec2(boneSamplerTexelSize * (offset + 3.5), 0))
+		texture(smp, vec2(boneSamplerTexelSize * (offset + 0.5), 0)),
+		texture(smp, vec2(boneSamplerTexelSize * (offset + 1.5), 0)),
+		texture(smp, vec2(boneSamplerTexelSize * (offset + 2.5), 0)),
+		texture(smp, vec2(boneSamplerTexelSize * (offset + 3.5), 0))
 		);
 }
 highp vec4 calcVertexF4(highp vec4 srcVertex) {
@@ -102,7 +104,7 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 
 #endif
 
-varying highp vec4 vcolor;
+out highp vec4 vcolor;
 
 
 void main()
@@ -123,7 +125,7 @@ void main()
 	// 		+ _glesBlendWeight4.y * glstate_matrix_bones[int(_glesBlendIndex4.y)]
 	// 		+ _glesBlendWeight4.z * glstate_matrix_bones[int(_glesBlendIndex4.z)]
 	// 		+ _glesBlendWeight4.w * glstate_matrix_bones[int(_glesBlendIndex4.w)];
-	vcolor = vec4(texture2D(boneSampler, _glesVertex.xz / vec2(8., 0)/ 3.).rgb, 1);
+	vcolor = vec4(texture(boneSampler, _glesVertex.xz / vec2(8., 0)/ 3.).rgb, 1);
     // xlv_TEXCOORD0 = _glesMultiTexCoord0.xy * _MainTex_ST.xy + _MainTex_ST.zw;
     highp vec4 position=vec4(_glesVertex.xyz,1.0);
 

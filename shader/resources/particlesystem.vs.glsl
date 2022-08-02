@@ -1,9 +1,10 @@
+#version 300 es
 
 precision mediump float;  
 
 //坐标属性
-attribute vec3 _glesVertex;
-attribute vec2 _glesMultiTexCoord0;
+in vec3 _glesVertex;
+in vec2 _glesMultiTexCoord0;
 
 uniform mat4 glstate_matrix_mvp;
 
@@ -13,16 +14,16 @@ uniform float _UVSpeedX;
 uniform float _UVSpeedY;
 uniform float glstate_timer;
 
-varying vec4 v_color;
-varying vec2 v_uv;
+out vec4 v_color;
+out vec2 v_uv;
 
 #ifdef INSTANCE
-    attribute vec4 a_particle_position;
-    attribute vec4 a_particle_scale;
-    attribute vec4 a_particle_rotation;
-    attribute vec4 a_particle_color;
-    attribute vec4 a_particle_tilingOffset;
-    attribute vec4 a_particle_flipUV;
+    in vec4 a_particle_position;
+    in vec4 a_particle_scale;
+    in vec4 a_particle_rotation;
+    in vec4 a_particle_color;
+    in vec4 a_particle_tilingOffset;
+    in vec4 a_particle_flipUV;
 #else
     uniform vec4 a_particle_position;
     uniform vec4 a_particle_scale;
@@ -38,7 +39,7 @@ uniform vec4 u_particle_pivotOffset;
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 mat3 makeParticleRotationMatrix(vec3 rotation)

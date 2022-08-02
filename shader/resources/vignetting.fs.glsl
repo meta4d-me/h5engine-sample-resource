@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -13,7 +15,7 @@ uniform highp float     _Blurred_Corners;
 uniform highp float     _Blur_Distance;
 uniform highp float     _Chromatic_Aberration;
 
-varying highp vec2      xlv_TEXCOORD0;   // 每个片元的纹素坐标
+in highp vec2      xlv_TEXCOORD0;   // 每个片元的纹素坐标
 
 //texture2DEtC1Mark
 
@@ -32,6 +34,7 @@ vec2 adjustUV(vec2 uv) {
     return uv;
 }
 
+out vec4 color; 
 void main () {
     float dist = distance(xlv_TEXCOORD0, vec2(0.5));
     // NOTE Unity Parameters:
@@ -51,15 +54,15 @@ void main () {
     vec2 r_uv = adjustUV(xlv_TEXCOORD0 - direction * direction * 0.01 * Chromatic_Aberration);
     vec2 b_uv = adjustUV(xlv_TEXCOORD0 + direction * direction * 0.01 * Chromatic_Aberration);
 
-    float base_r = texture2D(_MainTex, r_uv).r;
-    float base_b = texture2D(_MainTex, b_uv).b;
+    float base_r = texture(_MainTex, r_uv).r;
+    float base_b = texture(_MainTex, b_uv).b;
 
-    vec4 base_color = texture2D(_MainTex, xlv_TEXCOORD0);
+    vec4 base_color = texture(_MainTex, xlv_TEXCOORD0);
 
-    float blur_r = texture2D(_BlurTex, r_uv).r;
-    float blur_b = texture2D(_BlurTex, b_uv).b;
+    float blur_r = texture(_BlurTex, r_uv).r;
+    float blur_b = texture(_BlurTex, b_uv).b;
 
-    vec4 blur_color = texture2D(_BlurTex, xlv_TEXCOORD0);
+    vec4 blur_color = texture(_BlurTex, xlv_TEXCOORD0);
 
     float ch_r = mix(base_r, blur_r, Blurred_Corners);
     float ch_b = mix(base_b, blur_b, Blurred_Corners);
@@ -69,7 +72,7 @@ void main () {
     vec4 aberration = vec4(ch_r, color.g, ch_b, 1.0);
     vec4 dark = vec4(0.0, 0.0, 0.0, 1.0);
 
-    gl_FragColor = mix(aberration, dark, Vignetting);
-    // gl_FragColor = vec4(vec3(Blurred_Corners), 1.0);
+    color = mix(aberration, dark, Vignetting);
+    // color = vec4(vec3(Blurred_Corners), 1.0);
 
 }

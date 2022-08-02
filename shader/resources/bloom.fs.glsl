@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -15,13 +17,13 @@ uniform highp vec4     _blurSpread;
 uniform highp float     _bloomThreshold;
 // 阈值 - 图像中亮度高于该阈值的区域将产生泛光效果
 
-varying highp vec2      xlv_TEXCOORD0;   // 每个片元的纹素坐标
+in highp vec2      xlv_TEXCOORD0;   // 每个片元的纹素坐标
 
 #define INTENSITY       _bloomIntensity
 #define THRESHOLD       _bloomThreshold
 #define BLUR_SPREAD     vec2(_blurSpread.xy * _MainTex_TexelSize.xy)
 
-#define tex(t, uv)      texture2D((t), (uv))
+#define tex(t, uv)      texture((t), (uv))
 
 //texture2DEtC1Mark
 
@@ -37,10 +39,10 @@ vec4 fragDownsample(sampler2D image, vec2 uv) {
     uv2[2] = uv + _MainTex_TexelSize.xy * vec2(-1.5, -1.5);
     uv2[3] = uv + _MainTex_TexelSize.xy * vec2(1.5, -1.5);
     vec4 color;
-    color += texture2D(image, uv2[0]);
-    color += texture2D(image, uv2[1]);
-    color += texture2D(image, uv2[2]);
-    color += texture2D(image, uv2[3]);
+    color += texture(image, uv2[0]);
+    color += texture(image, uv2[1]);
+    color += texture(image, uv2[2]);
+    color += texture(image, uv2[3]);
     return max(color/4.0 - THRESHOLD, vec4(0.0)) * INTENSITY;
 }
 vec4 fastBlur(sampler2D image, vec2 uv, vec2 netFilterWidth) {
@@ -70,22 +72,23 @@ vec4 fastBlur(sampler2D image, vec2 uv, vec2 netFilterWidth) {
     return blur;
 }
 
+out vec4 color; 
 void main () {
     if(BLUR_SPREAD.x == 0.0 && BLUR_SPREAD.y == 0.0) {    // 不泛光, 只过滤
-        gl_FragColor = fragDownsample(_MainTex, xlv_TEXCOORD0);
+        color = fragDownsample(_MainTex, xlv_TEXCOORD0);
     } else if(THRESHOLD == 1.0){    // 不过滤, 只泛光
-        gl_FragColor = fastBlur(_MainTex, xlv_TEXCOORD0, BLUR_SPREAD);
+        color = fastBlur(_MainTex, xlv_TEXCOORD0, BLUR_SPREAD);
     } else {    // Final Composition
-        vec4 originColor = texture2D(_MainTex, xlv_TEXCOORD0);
+        vec4 originColor = texture(_MainTex, xlv_TEXCOORD0);
         originColor = vec4(originColor.rgb * INTENSITY, originColor.a);
-        vec4 bloomColor = texture2D(_BlurTex, xlv_TEXCOORD0);
-        gl_FragColor = originColor + bloomColor;
+        vec4 bloomColor = texture(_BlurTex, xlv_TEXCOORD0);
+        color = originColor + bloomColor;
     }
 
-    // vec4 c = texture2D(_MainTex, xlv_TEXCOORD0);
+    // vec4 c = texture(_MainTex, xlv_TEXCOORD0);
     // vec4 cur_color;
     // cur_color = fastBlur(_MainTex, xlv_TEXCOORD0,BLUR_SPREAD);
     //
     // c = vec4(c.rgb * INTENSITY, c.a) / 2.0;
-    // gl_FragColor = c;
+    // color = c;
 }

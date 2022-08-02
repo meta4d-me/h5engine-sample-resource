@@ -1,13 +1,17 @@
-attribute vec4 _glesVertex;
-attribute vec4 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
 
 uniform highp vec4 _MainTex_TexelSize;
 uniform highp vec4 sample_offsets;//采样偏移
 
-varying highp vec2 uv;
-varying highp vec4 uv01;
-varying highp vec4 uv23;
-varying highp vec4 uv45;
+out highp vec2 uv;
+out highp vec4 uv01;
+out highp vec4 uv23;
+out highp vec4 uv45;
 
 
 void main()

@@ -1,5 +1,9 @@
-attribute vec4 _glesVertex;
-attribute vec4 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
 uniform highp mat4 glstate_matrix_mvp;
 uniform lowp float _SpeedU;
 uniform lowp float _SpeedV;
@@ -7,25 +11,25 @@ uniform lowp float glstate_timer;
 uniform mediump vec4 _LightTex_ST;
 uniform mediump vec4 _MainTex_ST;
 
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 _StreamLightUV;
+out mediump vec2 xlv_TEXCOORD0;
+out mediump vec2 _StreamLightUV;
 
 #ifdef LIGHTMAP
-attribute mediump vec4 _glesMultiTexCoord1;
+in mediump vec4 _glesMultiTexCoord1;
 uniform mediump vec4 glstate_lightmapOffset;
 // uniform mediump float glstate_lightmapUV;
-varying mediump vec2 lightmap_TEXCOORD;
+out mediump vec2 lightmap_TEXCOORD;
 #endif
 
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 #ifdef SKIN
-attribute lowp vec4 _glesBlendIndex4;
-attribute lowp vec4 _glesBlendWeight4;
+in lowp vec4 _glesBlendIndex4;
+in lowp vec4 _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {

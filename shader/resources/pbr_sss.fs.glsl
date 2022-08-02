@@ -42,7 +42,6 @@ in vec2        xlv_TEXCOORD0;
 
 //textureEtC1Mark
 
-out vec4 color;
 vec3 Fresnel(vec3 f0, float LoN, float roughness) {
     return f0 + (max(vec3(1.0 - roughness), f0) - f0) * pow(1.0 - LoN, 5.0);
 }
@@ -168,6 +167,7 @@ vec3 translucency(vec3 l, st_core c) {
     return fLT;
 }
 
+out vec4 color; 
 void main () {
     st_core c = init();
 
@@ -183,8 +183,8 @@ void main () {
     finalColor += ((1.0 - F) * (1.0 - c.Metallic) * c.Basecolor.rgb + indirectSpecular) * 0.6; // IBL+PBR
     finalColor += translucency(vec3(-10.0, 10.0, -10.0), c) * vec3(1.0, 1.0, 1.0);
 
-    // gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
-    // gl_FragColor = texture(uv_Basecolor, xlv_TEXCOORD0);
-    // gl_FragColor = vec4(finalColor, 1.0);
+    // color = vec4(0.0, 1.0, 1.0, 1.0);
+    // color = texture(uv_Basecolor, xlv_TEXCOORD0);
+    // color = vec4(finalColor, 1.0);
     color = vec4(finalColor, 1.0);
 }

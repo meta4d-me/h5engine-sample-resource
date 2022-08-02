@@ -1,13 +1,15 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH  
 precision highp float;  
 #else  
 precision mediump float;  
 #endif 
-attribute vec4 _glesVertex;    
-//attribute vec3 _glesNormal;
+in vec4 _glesVertex;    
+//in vec3 _glesNormal;
 //uniform highp mat4 glstate_matrix_modelview;
 uniform highp mat4 glstate_matrix_mvp;      
-// varying highp vec3 xlv_Normal;                
+// out highp vec3 xlv_Normal;                
        
 void main()                                     
 {        

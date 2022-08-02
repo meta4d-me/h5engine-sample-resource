@@ -1,3 +1,6 @@
+#version 300 es
+
+precision mediump float;
 
 uniform lowp sampler2D _MainTex;  
 uniform lowp sampler2D _NormalTex;   //normal map
@@ -6,19 +9,20 @@ uniform lowp vec4 glstate_vec4_lightposs[8];
 uniform lowp vec4 glstate_vec4_lightdirs[8];
 uniform lowp float glstate_float_spotangelcoss[8];
 uniform lowp float glstate_lightcount;
-//varying lowp vec4 xlv_COLOR;     
-//varying highp vec3 xlv_Position;                                             
-varying mediump vec2 xlv_TEXCOORD0; 
-//varying highp vec3 xlv_Normal; 
-//varying highp mat4 normalmat;
-varying lowp mat3 TBNmat;
-varying lowp vec3 worldpos; 
-varying lowp vec3 eyedir;
+//in lowp vec4 xlv_COLOR;     
+//in highp vec3 xlv_Position;                                             
+in mediump vec2 xlv_TEXCOORD0; 
+//in highp vec3 xlv_Normal; 
+//in highp mat4 normalmat;
+in lowp mat3 TBNmat;
+in lowp vec3 worldpos; 
+in lowp vec3 eyedir;
 
 //texture2DEtC1Mark
 
 lowp float calcDiffuse(lowp vec3 N,lowp vec3 worldpos,lowp vec4 lightPos,lowp vec4 lightDir,lowp float cosspot);
 lowp float calcSpec(lowp vec3 N,lowp vec3 worldpos,lowp vec3 eyedir,lowp vec4 lightPos,lowp vec4 lightDir,lowp float cosspot);
+out vec4 color; 
 void main() 
 {
     //不需要法线图时，normal 就是这个N
@@ -39,7 +43,7 @@ void main()
 		
 		//这是进入切空间的原因
 		lowp vec3 normal;// = TBN*N;
-		normal =  texture2D(_NormalTex, xlv_TEXCOORD0).xyz *2.0 -1.0;
+		normal =  texture(_NormalTex, xlv_TEXCOORD0).xyz *2.0 -1.0;
         normal =normalize(normal);
 		normal =TBNmat*(normal);
 
@@ -51,9 +55,9 @@ void main()
 	lowp vec4 color = vec4(diff,diff,diff,1.0);       
     lowp vec4 colorspec =vec4(spec,spec,spec,1.0);
     lowp vec4 fcolor;
-    fcolor = (color * texture2D(_MainTex, xlv_TEXCOORD0) + colorspec);
+    fcolor = (color * texture(_MainTex, xlv_TEXCOORD0) + colorspec);
 
-    gl_FragData[0] = fcolor;
+    color = fcolor;
 }
 
 lowp float calcDiffuse(lowp vec3 N,lowp vec3 worldpos,lowp vec4 lightPos,lowp vec4 lightDir,lowp float cosspot)

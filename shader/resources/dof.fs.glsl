@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH  
 precision highp float;  
 #else  
@@ -13,7 +15,7 @@ uniform highp float _farBlurScale;
 uniform highp float _nearBlurScale;
 
 
-varying highp vec2 xlv_TEXCOORD0;
+in highp vec2 xlv_TEXCOORD0;
 
 const highp float UnpackDownscale = 255. / 256.; 
 // 0..1 -> fraction (excluding 1)
@@ -26,11 +28,12 @@ highp float unpackRGBAToDepth( const in vec4 v )
 
 //texture2DEtC1Mark
 
+out vec4 color; 
 void main() 
 {
-	lowp vec4 basecolor =texture2D(_MainTex,xlv_TEXCOORD0);
-    lowp vec4 blurcolor=texture2D(_BlurTex,xlv_TEXCOORD0);
-    lowp vec4 depthcolor=texture2D(_DepthTex,xlv_TEXCOORD0);
+	lowp vec4 basecolor =texture(_MainTex,xlv_TEXCOORD0);
+    lowp vec4 blurcolor=texture(_BlurTex,xlv_TEXCOORD0);
+    lowp vec4 depthcolor=texture(_DepthTex,xlv_TEXCOORD0);
     highp float depth=unpackRGBAToDepth(depthcolor);
 
 
@@ -42,5 +45,5 @@ void main()
         //finalcolor=mix(blurcolor,basecolor,1.0);//为1的时候取basecolor
         //finalcolor=vec4(depth,depth,depth,1.0);
     }
-    gl_FragData[0] = finalcolor;
+    color = finalcolor;
 }

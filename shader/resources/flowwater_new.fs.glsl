@@ -1,18 +1,23 @@
+#version 300 es
+
+precision mediump float;
+
 uniform lowp sampler2D _MainTex;  
-varying mediump vec2 _base_uv;
-varying lowp vec4 attcolor;
+in mediump vec2 _base_uv;
+in lowp vec4 attcolor;
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color; 
-varying lowp float factor;
+in lowp float factor;
 #endif
 
 //texture2DEtC1Mark
 
 
+out vec4 color; 
 void main() 
 {
-    lowp vec4 basecolor = texture2D(_MainTex, _base_uv);
+    lowp vec4 basecolor = texture(_MainTex, _base_uv);
     lowp vec4 emission=basecolor*attcolor;
 
     #ifdef FOG
@@ -20,5 +25,5 @@ void main()
     emission= mix(vec4(0,0,0,0), emission, factor);
     #endif
 
-    gl_FragData[0] =emission;
+    color =emission;
 }

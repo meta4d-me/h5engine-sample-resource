@@ -1,9 +1,10 @@
+#version 300 es
 
 precision mediump float;  
 
 //坐标属性
-attribute vec3 _glesVertex;
-attribute vec2 _glesMultiTexCoord0;
+in vec3 _glesVertex;
+in vec2 _glesMultiTexCoord0;
 
 uniform mat4 glstate_matrix_mvp;
 
@@ -13,8 +14,8 @@ uniform float _UVSpeedX;
 uniform float _UVSpeedY;
 uniform float glstate_timer;
 
-varying vec4 v_color;
-varying vec2 v_uv;
+out vec4 v_color;
+out vec2 v_uv;
 
 void main() 
 {

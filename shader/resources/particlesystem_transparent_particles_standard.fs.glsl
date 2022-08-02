@@ -1,3 +1,5 @@
+#version 300 es
+
 precision mediump float;
 
 uniform sampler2D _MainTex;
@@ -30,11 +32,11 @@ uniform float _ABOffset;
 
 uniform float _GlobalAlpha;
 
-varying vec2 v_uv;
-varying vec4 v_color;
+in vec2 v_uv;
+in vec4 v_color;
 
-varying vec2 v_particledata;
-varying vec2 v_noiseuv;
+in vec2 v_particledata;
+in vec2 v_noiseuv;
 
 uniform float APPLY_RGB_COLOR_VERTEX;
 uniform float NOISE_TEXTURE_EMISSION;
@@ -43,9 +45,10 @@ uniform float NOISE_TEXTURE_DISSOLVE;
 
 uniform float BlendMode;
 
+out vec4 color; 
 void main() 
 {
-    vec4 tex = texture2D(_MainTex, v_uv);
+    vec4 tex = texture(_MainTex, v_uv);
 
     vec4 col = vec4(1.0, 1.0, 1.0, 1.0);
 
@@ -64,7 +67,7 @@ void main()
         
         if( NOISE_TEXTURE > 0.5)
         {
-            vec3 noise = texture2D(_NoiseTex, v_noiseuv).xyz;
+            vec3 noise = texture(_NoiseTex, v_noiseuv).xyz;
         
             if( NOISE_TEXTURE_EMISSION > 0.5)
             {
@@ -114,7 +117,7 @@ void main()
         {
             if( COLOR_RAMP > 0.5)
             {
-                col.xyz = texture2D(_ColorRamp, vec2((1.0 - lerpValue), 0.0)).xyz * vcolor.xyz * _EmissionSaturation;
+                col.xyz = texture(_ColorRamp, vec2((1.0 - lerpValue), 0.0)).xyz * vcolor.xyz * _EmissionSaturation;
             }
             else
             {
@@ -133,7 +136,7 @@ void main()
         {
             if( COLOR_RAMP > 0.5)
             {
-                col.xyz = texture2D(_ColorRamp, vec2((1.0 - lerpValue), 0.0)).xyz * vcolor.xyz * col.a * _EmissionSaturation;
+                col.xyz = texture(_ColorRamp, vec2((1.0 - lerpValue), 0.0)).xyz * vcolor.xyz * col.a * _EmissionSaturation;
             }
             else
             {
@@ -192,5 +195,5 @@ void main()
 
     }
 
-    gl_FragColor = col;
+    color = col;
 }

@@ -55,8 +55,6 @@ in vec3 v_pos;
 in vec2 xlv_TEXCOORD0;
 in mat3 TBN;
 
-out vec4 color;
-
 #ifdef LIGHTMAP
 uniform lowp float glstate_lightmapRGBAF16;
 uniform lowp sampler2D _LightmapTex;
@@ -259,6 +257,7 @@ lightData calcLight(vec3 N,vec3 worldpos,vec4 lightPos,vec4 lightDir,float cossp
     return ld;
 }
 
+out vec4 color; 
 void main() {
     //alpha Test
     vec4 baseTex = texture(uv_Basecolor, xlv_TEXCOORD0 * uvRepeat);
@@ -332,6 +331,6 @@ void main() {
     finalColor.xyz = mix(glstate_fog_color.rgb, finalColor.rgb, factor);
 #endif
 
-    // gl_FragColor = vec4(finalColor, c.diffuse.a);
+    // color = vec4(finalColor, c.diffuse.a);
     color = vec4(finalColor, c.diffuse.a);
 }

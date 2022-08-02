@@ -1,13 +1,17 @@
-attribute highp vec4 _glesVertex;
-attribute mediump vec4 _glesMultiTexCoord0;   
+#version 300 es
+
+precision mediump float;
+
+in highp vec4 _glesVertex;
+in mediump vec4 _glesMultiTexCoord0;   
 
 uniform lowp vec4 _Main_Color;
 uniform highp mat4 glstate_matrix_mvp;
 uniform mediump vec4 _Main_Tex_ST;
 
 
-varying lowp vec4 xlv_COLOR;
-varying mediump vec2 xlv_TEXCOORD0;                
+out lowp vec4 xlv_COLOR;
+out mediump vec2 xlv_TEXCOORD0;                
 void main()                                     
 {                                               
     highp vec4 tmpvar_1=vec4(_glesVertex.xyz,1.0);

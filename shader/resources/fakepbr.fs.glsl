@@ -1,3 +1,7 @@
+#version 300 es
+
+precision mediump float;
+
 uniform lowp sampler2D _albedo;
 uniform lowp sampler2D _normal;
 uniform lowp sampler2D _gloss;
@@ -9,11 +13,11 @@ uniform lowp vec4 glstate_vec4_lightposs[8];
 uniform lowp vec4 glstate_vec4_lightdirs[8];
 uniform lowp float glstate_float_spotangelcoss[8];
 
-varying mediump vec2 xlv_TEXCOORD0;
-varying lowp vec3 posWorld;
-varying lowp vec3 normalDir;
-varying lowp vec3 tangentDir;
-varying lowp vec3 bitangentDir;
+in mediump vec2 xlv_TEXCOORD0;
+in lowp vec3 posWorld;
+in lowp vec3 normalDir;
+in lowp vec3 tangentDir;
+in lowp vec3 bitangentDir;
 
 //texture2DEtC1Mark
 
@@ -62,9 +66,10 @@ lowp float calcSpec(lowp vec3 N,lowp vec3 worldpos,lowp vec3 eyedir,lowp vec4 li
     return spec;
 }
 
+out vec4 color; 
 void main() 
 {
-    lowp float _opacity_var = texture2D(_opacity,xlv_TEXCOORD0).g;
+    lowp float _opacity_var = texture(_opacity,xlv_TEXCOORD0).g;
     if(_opacity_var<0.5)  discard;
 
 
@@ -77,7 +82,7 @@ void main()
     for(int i=0;i<8;i++)
     {
         lowp vec3 normal;// = TBN*N;
-		normal =  texture2D(_normal, xlv_TEXCOORD0).xyz *2.0 -1.0;
+		normal =  texture(_normal, xlv_TEXCOORD0).xyz *2.0 -1.0;
         normal =normalize(normal);
 		normal =TBNmat*(normal);
         
@@ -88,17 +93,17 @@ void main()
     //gloss //假的光洁度，只影响了高光
     lowp float Pi = 3.141592654;
     lowp float InvPi = 0.31830988618;
-    lowp vec4 _gloss_var = texture2D(_gloss,xlv_TEXCOORD0);
+    lowp vec4 _gloss_var = texture(_gloss,xlv_TEXCOORD0);
     lowp float gloss = _gloss_var.r;
     lowp float specPow = exp2( gloss * 10.0+1.0);
     //spec //受到高光贴图的过滤
     lowp float normTerm = (specPow + 8.0 ) / (8.0 * Pi);
-    lowp vec4 specularColor = texture2D(_specular,xlv_TEXCOORD0);
+    lowp vec4 specularColor = texture(_specular,xlv_TEXCOORD0);
     lowp float specularMonochrome = max( max(specularColor.r, specularColor.g), specularColor.b);
     specularColor*=pow(specularPower,specPow)*normTerm;
     //diffuse
 
-    lowp vec4 diffuseColor= texture2D(_albedo, xlv_TEXCOORD0);//光照颜色
+    lowp vec4 diffuseColor= texture(_albedo, xlv_TEXCOORD0);//光照颜色
     diffuseColor *= 1.0-specularMonochrome;//均衡能量
     lowp vec3 directDiffuse = vec3(diff,diff,diff);//直接光照
     lowp vec3 indirectDiffuse = vec3(0.3,0.3,0.3);//间接光照
@@ -107,6 +112,6 @@ void main()
     lowp vec4 prev_2;
     lowp vec4 final = (diffuseColor*vec4(directDiffuse+indirectDiffuse,1.0)  + specularColor);
 
-    gl_FragData[0] = final;
+    color = final;
 
 }

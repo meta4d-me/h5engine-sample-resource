@@ -1,18 +1,22 @@
-attribute highp vec3 _glesVertex;
-attribute highp vec4 _glesColor;
-attribute mediump vec2 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in highp vec3 _glesVertex;
+in highp vec4 _glesColor;
+in mediump vec2 _glesMultiTexCoord0;
 uniform highp mat4 glstate_matrix_mvp;
 
 uniform mediump vec4 _Main_Tex_ST;
 uniform mediump vec4 _Mask_ST;
-varying mediump vec2 _maintex_uv;
-varying mediump vec2 _mask_uv;
+out mediump vec2 _maintex_uv;
+out mediump vec2 _mask_uv;
 
 uniform mediump vec4 _Main_Color;
 uniform mediump float _mixColorRate;
 uniform mediump float _mixAlphaRate;
 
-varying mediump vec4 v_color;
+out mediump vec4 v_color;
 
 void main()
 {

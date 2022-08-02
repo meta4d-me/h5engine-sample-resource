@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -6,7 +8,7 @@ precision mediump float;
 
 uniform sampler2D _MainTex;
 uniform float _K;
-varying highp vec2 xlv_TEXCOORD0;
+in highp vec2 xlv_TEXCOORD0;
 
 //texture2DEtC1Mark
 
@@ -18,9 +20,10 @@ vec4 xposure(vec4 color, float gray, float ex)
     return color * f;
 }
 
+out vec4 color; 
 void main()
 {
-    vec4 color = texture2D(_MainTex, xlv_TEXCOORD0);
+    vec4 color = texture(_MainTex, xlv_TEXCOORD0);
     float lum = .3 * color.x + .59 * color.y + .11 * color.z;
-    gl_FragData[0] = xposure(color, lum, _K);
+    color = xposure(color, lum, _K);
 }

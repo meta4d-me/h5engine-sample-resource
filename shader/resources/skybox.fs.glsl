@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -10,7 +12,7 @@ uniform samplerCube u_sky;
 uniform vec4        glstate_eyepos;
 uniform float       u_Exposure;
 
-varying vec3        TexCoords;
+in vec3        TexCoords;
 
 vec3 decoRGBE(vec4 r) {
     if(r.a != 0.) {
@@ -29,6 +31,7 @@ vec3 toneMapACES(vec3 color) {
     return pow(clamp((color * (A * color + B)) / (color * (C * color + D) + E), 0.0, 1.0), vec3(1.0 / 2.2));
 }
 
+out vec4 color; 
 void main () {
-    gl_FragColor = vec4(toneMapACES(u_Exposure * decoRGBE(textureCube(u_sky, TexCoords))), 1.0);
+    color = vec4(toneMapACES(u_Exposure * decoRGBE(texture(u_sky, TexCoords))), 1.0);
 }

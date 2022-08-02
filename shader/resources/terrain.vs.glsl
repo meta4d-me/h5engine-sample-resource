@@ -1,5 +1,9 @@
-attribute vec4 _glesVertex;
-attribute lowp vec4 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in vec4 _glesVertex;
+in lowp vec4 _glesMultiTexCoord0;
 
 uniform highp mat4 glstate_matrix_mvp;
 
@@ -8,22 +12,22 @@ uniform lowp vec4 _Splat1_ST;
 uniform lowp vec4 _Splat2_ST;
 uniform lowp vec4 _Splat3_ST;
 
-varying lowp vec2 xlv_TEXCOORD0;
-varying lowp vec2 uv_Splat0;
-varying lowp vec2 uv_Splat1;
-varying lowp vec2 uv_Splat2;
-varying lowp vec2 uv_Splat3;
+out lowp vec2 xlv_TEXCOORD0;
+out lowp vec2 uv_Splat0;
+out lowp vec2 uv_Splat1;
+out lowp vec2 uv_Splat2;
+out lowp vec2 uv_Splat3;
 
 #ifdef LIGHTMAP
-attribute mediump vec4 _glesMultiTexCoord1;
+in mediump vec4 _glesMultiTexCoord1;
 uniform mediump vec4 glstate_lightmapOffset;
-varying mediump vec2 lightmap_TEXCOORD;
+out mediump vec2 lightmap_TEXCOORD;
 #endif
 
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 void main()

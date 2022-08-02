@@ -1,6 +1,10 @@
-attribute highp vec3 _glesVertex;
-attribute mediump vec2 _glesMultiTexCoord0;
-attribute lowp vec4 _glesColor;
+#version 300 es
+
+precision mediump float;
+
+in highp vec3 _glesVertex;
+in mediump vec2 _glesMultiTexCoord0;
+in lowp vec4 _glesColor;
 
 uniform lowp vec4 _MainColor;
 uniform lowp float _alphaRate;
@@ -12,14 +16,14 @@ uniform lowp float _speedu;
 uniform lowp float _speedv;
 uniform lowp float glstate_timer;
 
-varying mediump vec2 _base_uv;
-varying lowp vec4 attcolor;
+out mediump vec2 _base_uv;
+out lowp vec4 attcolor;
 
 
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 void main()

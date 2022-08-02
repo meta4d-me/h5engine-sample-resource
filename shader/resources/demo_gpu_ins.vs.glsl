@@ -1,18 +1,22 @@
-attribute vec4 _glesVertex;
-attribute vec4 _glesColor;
+#version 300 es
+
+precision mediump float;
+
+in vec4 _glesVertex;
+in vec4 _glesColor;
 
 #ifdef INSTANCE
-attribute vec4 a_particle_color;
-attribute highp vec4 instance_offset_matrix_0;
-attribute highp vec4 instance_offset_matrix_1;
-attribute highp vec4 instance_offset_matrix_2;
-attribute highp vec4 instance_offset_matrix_3;
+in vec4 a_particle_color;
+in highp vec4 instance_offset_matrix_0;
+in highp vec4 instance_offset_matrix_1;
+in highp vec4 instance_offset_matrix_2;
+in highp vec4 instance_offset_matrix_3;
 #else
 uniform vec4 a_particle_color;
 #endif
 
 uniform highp mat4 glstate_matrix_mvp;
-varying lowp vec4 xlv_COLOR;
+out lowp vec4 xlv_COLOR;
 void main()
 {
     highp vec4 tmpvar_1;

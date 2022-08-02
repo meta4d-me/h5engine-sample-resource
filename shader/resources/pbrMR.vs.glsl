@@ -1,29 +1,33 @@
-attribute highp vec4 _glesVertex;
-attribute mediump vec4 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in highp vec4 _glesVertex;
+in mediump vec4 _glesMultiTexCoord0;
 
 uniform mediump vec4 _MainTex_ST;
-varying mediump vec2 xlv_TEXCOORD0;
+out mediump vec2 xlv_TEXCOORD0;
 
-attribute lowp vec3 _glesNormal;
-attribute lowp vec3 _glesTangent;
+in lowp vec3 _glesNormal;
+in lowp vec3 _glesTangent;
 
 uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;
 uniform highp mat4      glstate_matrix_world2object;
 
-varying highp vec3 v_N;
-varying mat3 TBN;
+out highp vec3 v_N;
+out mat3 TBN;
 
 #ifdef FOG
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 uniform highp vec4 OFFSET;
 
-attribute vec4 _glesColor;
-varying highp vec4 v_color;
+in vec4 _glesColor;
+out highp vec4 v_color;
 
-varying vec3 v_pos;
+out vec3 v_pos;
 
 #define DIST	20.0
 #define FOG_far	100.0
