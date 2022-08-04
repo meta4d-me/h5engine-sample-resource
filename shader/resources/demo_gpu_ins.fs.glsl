@@ -1,6 +1,11 @@
-varying lowp vec4 xlv_COLOR;
+#version 300 es
 
+precision mediump float;
+
+in lowp vec4 xlv_COLOR;
+
+out vec4 color; 
 void main()
 {
-    gl_FragData[0] = xlv_COLOR;
+    color = xlv_COLOR;
 }

@@ -1,4 +1,6 @@
-#extension GL_OES_standard_derivatives : enable
+#version 300 es
+
+// #extension GL_OES_standard_derivatives : enable
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -34,11 +36,11 @@ uniform sampler2D   uv_Thickness;
 #define TEX_FORMAT_METALLIC     rgb
 #define TEX_FORMAT_ROUGHNESS    a
 
-varying vec3        v_normal;
-varying vec3        v_pos;
-varying vec2        xlv_TEXCOORD0;
+in vec3        v_normal;
+in vec3        v_pos;
+in vec2        xlv_TEXCOORD0;
 
-//texture2DEtC1Mark
+//textureEtC1Mark
 
 vec3 Fresnel(vec3 f0, float LoN, float roughness) {
     return f0 + (max(vec3(1.0 - roughness), f0) - f0) * pow(1.0 - LoN, 5.0);
@@ -79,13 +81,13 @@ mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv){
 vec3 getIBL(float roughness, vec3 r) {
     float a = roughness * 4.0;
 
-    if ( a < 1.0)   return mix(textureCube(u_sky, r).rgb, textureCube(u_sky_1, r).rgb, a);
-    if ( a < 2.0)   return mix(textureCube(u_sky_1, r).rgb, textureCube(u_sky_2, r).rgb, a - 1.0);
-    if ( a < 3.0)   return mix(textureCube(u_sky_2, r).rgb, textureCube(u_sky_3, r).rgb, a - 2.0);
-    if ( a < 4.0)   return mix(textureCube(u_sky_3, r).rgb, textureCube(u_sky_4, r).rgb, a - 3.0);
-    // if ( a < 5.0)   return mix(textureCube(u_sky_4, r).rgb, textureCube(u_sky_5, r).rgb, a - 4.0);
+    if ( a < 1.0)   return mix(texture(u_sky, r).rgb, texture(u_sky_1, r).rgb, a);
+    if ( a < 2.0)   return mix(texture(u_sky_1, r).rgb, texture(u_sky_2, r).rgb, a - 1.0);
+    if ( a < 3.0)   return mix(texture(u_sky_2, r).rgb, texture(u_sky_3, r).rgb, a - 2.0);
+    if ( a < 4.0)   return mix(texture(u_sky_3, r).rgb, texture(u_sky_4, r).rgb, a - 3.0);
+    // if ( a < 5.0)   return mix(texture(u_sky_4, r).rgb, texture(u_sky_5, r).rgb, a - 4.0);
 
-    return textureCube(u_sky_4,r).xyz;
+    return texture(u_sky_4,r).xyz;
 }
 
 struct st_core {
@@ -109,11 +111,11 @@ st_core init() {
     st_core temp;
 
     // PBR Material
-    temp.Basecolor  = texture2D(uv_Basecolor, xlv_TEXCOORD0) * CustomBasecolor;
-    temp.Normal     = texture2D(uv_Normal, xlv_TEXCOORD0);
-    temp.Metallic   = texture2D(uv_MetallicRoughness, xlv_TEXCOORD0).TEX_FORMAT_METALLIC * 0.01;
-    temp.Roughness  = texture2D(uv_MetallicRoughness, xlv_TEXCOORD0).TEX_FORMAT_ROUGHNESS * 0.5;
-    temp.AO         = texture2D(uv_AO, xlv_TEXCOORD0);
+    temp.Basecolor  = texture(uv_Basecolor, xlv_TEXCOORD0) * CustomBasecolor;
+    temp.Normal     = texture(uv_Normal, xlv_TEXCOORD0);
+    temp.Metallic   = texture(uv_MetallicRoughness, xlv_TEXCOORD0).TEX_FORMAT_METALLIC * 0.01;
+    temp.Roughness  = texture(uv_MetallicRoughness, xlv_TEXCOORD0).TEX_FORMAT_ROUGHNESS * 0.5;
+    temp.AO         = texture(uv_AO, xlv_TEXCOORD0);
 
     vec3 f0 = vec3(0.04);
     temp.f0 = mix(f0, temp.Basecolor.xyz, temp.Metallic);
@@ -158,18 +160,19 @@ vec3 T(float s) {
          vec3(0.078, 0.0,   0.0)   * exp(-s * s / 7.41);
 }
 vec3 translucency(vec3 l, st_core c) {
-    float thick = 1.0 -texture2D(uv_Thickness, xlv_TEXCOORD0).r;
+    float thick = 1.0 -texture(uv_Thickness, xlv_TEXCOORD0).r;
     vec3 vLTLight = normalize(l);
     float fLTDot = pow(max(dot(c.N, -vLTLight), 0.4), 2.0) * 1.0;
     vec3 fLT = 1.0 * (fLTDot + 0.0) * thick * T(thick);
     return fLT;
 }
 
+out vec4 color; 
 void main () {
     st_core c = init();
 
-    vec3 envLight   = textureCube(u_sky, c.R).xyz;
-    vec2 envBRDF    = texture2D(brdf, vec2(clamp(c.NdotV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
+    vec3 envLight   = texture(u_sky, c.R).xyz;
+    vec2 envBRDF    = texture(brdf, vec2(clamp(c.NdotV, 0.0, 0.9999999), clamp(1.0-c.Roughness, 0.0, 0.9999999))).rg;
 
     vec3 F = Fresnel(c.f0, c.NdotV, c.Roughness);
     vec3 indirectSpecular = envLight * (F * envBRDF.r + envBRDF.g) * vec3(0.3, 0.4, 0.8);
@@ -180,7 +183,8 @@ void main () {
     finalColor += ((1.0 - F) * (1.0 - c.Metallic) * c.Basecolor.rgb + indirectSpecular) * 0.6; // IBL+PBR
     finalColor += translucency(vec3(-10.0, 10.0, -10.0), c) * vec3(1.0, 1.0, 1.0);
 
-    // gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
-    // gl_FragColor = texture2D(uv_Basecolor, xlv_TEXCOORD0);
-    gl_FragColor = vec4(finalColor, 1.0);
+    // color = vec4(0.0, 1.0, 1.0, 1.0);
+    // color = texture(uv_Basecolor, xlv_TEXCOORD0);
+    // color = vec4(finalColor, 1.0);
+    color = vec4(finalColor, 1.0);
 }

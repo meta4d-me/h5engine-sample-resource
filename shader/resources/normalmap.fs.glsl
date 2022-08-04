@@ -1,3 +1,6 @@
+#version 300 es
+
+precision mediump float;
 
 uniform lowp sampler2D _MainTex;  
 uniform lowp sampler2D _NormalTex;   //normal map
@@ -7,17 +10,18 @@ uniform lowp vec4 glstate_vec4_lightposs[8];
 uniform lowp vec4 glstate_vec4_lightdirs[8];
 uniform lowp float glstate_float_spotangelcoss[8];
 uniform lowp float glstate_lightcount;
-varying lowp vec4 xlv_COLOR;     
-varying highp vec3 xlv_Position;                                             
-varying mediump vec2 xlv_TEXCOORD0; 
-varying lowp mat3 TBNmat;
-varying highp vec3 worldpos; 
+in lowp vec4 xlv_COLOR;     
+in highp vec3 xlv_Position;                                             
+in mediump vec2 xlv_TEXCOORD0; 
+in lowp mat3 TBNmat;
+in highp vec3 worldpos; 
 
 //texture2DEtC1Mark
 
 lowp float calcDiffuse(lowp vec3 N,lowp vec3 worldpos,lowp vec4 lightPos,lowp vec4 lightDir,lowp float cosspot);
 // highp mat3 cotangentFrame(vec3 normal,highp vec3 position,vec2 uv);
 
+out vec4 color; 
 void main() 
 {
 	//切空间逆矩阵的计算 应该在vertex shader 里面完成，不需要dfdx 和 dfdy
@@ -44,7 +48,7 @@ void main()
 		
 		//这是进入切空间的原因
 		lowp vec3 normal;// = TBN*N;
-		normal =  texture2D(_NormalTex, xlv_TEXCOORD0).xyz *2.0 -1.0;
+		normal =  texture(_NormalTex, xlv_TEXCOORD0).xyz *2.0 -1.0;
         normal =normalize(normal);
 		normal =TBN*(normal);
 
@@ -55,9 +59,9 @@ void main()
 	lowp vec4 color = vec4(diff,diff,diff,1.0);       
 
     lowp vec4 tmpvar_3;
-    tmpvar_3 = (color * texture2D(_MainTex, xlv_TEXCOORD0));
+    tmpvar_3 = (color * texture(_MainTex, xlv_TEXCOORD0));
 
-    gl_FragData[0] = tmpvar_3;
+    color = tmpvar_3;
 }
 
 lowp float calcDiffuse(lowp vec3 N,lowp vec3 worldpos,lowp vec4 lightPos,lowp vec4 lightDir,lowp float cosspot)

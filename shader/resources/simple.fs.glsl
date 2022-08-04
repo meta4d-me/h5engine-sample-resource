@@ -1,19 +1,22 @@
+#version 300 es
+
 precision highp float;
 
 uniform sampler2D _MainTex;
 uniform float _AlphaCut;
 uniform vec4 _MainColor;
 
-varying vec2 xlv_TEXCOORD0;    
+in vec2 xlv_TEXCOORD0;    
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color;
-varying lowp float factor;
+in lowp float factor;
 #endif
 
+out vec4 color; 
 void main() 
 {
-    vec4 basecolor = texture2D(_MainTex, xlv_TEXCOORD0);
+    vec4 basecolor = texture(_MainTex, xlv_TEXCOORD0);
 
     if(basecolor.a < _AlphaCut)
         discard;
@@ -24,5 +27,5 @@ void main()
     basecolor.xyz = mix(glstate_fog_color.rgb, basecolor.rgb, factor);
     #endif
         
-    gl_FragData[0] = basecolor;
+    color = basecolor;
 }

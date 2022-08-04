@@ -1,9 +1,11 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH  
 precision highp float;  
 #else  
 precision mediump float;  
 #endif 
-//varying highp vec3 xlv_Normal;   
+//in highp vec3 xlv_Normal;   
 
 const float PackUpscale = 256. / 255.; 
 // fraction -> 0..1 (including 1)
@@ -44,9 +46,10 @@ float unpackRGBToDepth( const in vec3 v )
 {
     return dot( v.xyz, UnpackFactors.yzw );
 }
+out vec4 color; 
 void main() 
 {
     float z = gl_FragCoord.z;// fract(gl_FragCoord.z *256.*256.);
     // highp vec2 normal =xlv_Normal.xy;
-    gl_FragColor=packDepthToRGBA(z);
+    color=packDepthToRGBA(z);
 }

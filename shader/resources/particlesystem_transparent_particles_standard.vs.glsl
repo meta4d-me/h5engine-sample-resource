@@ -1,9 +1,11 @@
+#version 300 es
+
 
 precision mediump float;
 
-attribute vec3 _glesVertex;
-attribute vec2 _glesMultiTexCoord0;
-attribute vec4 _glesColor;
+in vec3 _glesVertex;
+in vec2 _glesMultiTexCoord0;
+in vec4 _glesColor;
 
 uniform vec4 _MainTex_ST;
 
@@ -15,24 +17,24 @@ uniform vec4 _NoisePanning;
 
 uniform mat4 glstate_matrix_mvp;
 
-varying vec2 v_uv;
-varying vec4 v_color;
+out vec2 v_uv;
+out vec4 v_color;
 
 uniform float EXTENDED_PARTICLES;
-varying vec2 v_particledata;
+out vec2 v_particledata;
 
 uniform float NOISE_TEXTURE;
 uniform float NOISEUV;
-varying vec2 v_noiseuv;
+out vec2 v_noiseuv;
 
 
 
-attribute vec3 a_particle_position;
-attribute vec3 a_particle_scale;
-attribute vec3 a_particle_rotation;
-attribute vec4 a_particle_color;
-attribute vec4 a_particle_tilingOffset;
-attribute vec2 a_particle_flipUV;
+in vec3 a_particle_position;
+in vec3 a_particle_scale;
+in vec3 a_particle_rotation;
+in vec4 a_particle_color;
+in vec4 a_particle_tilingOffset;
+in vec2 a_particle_flipUV;
 
 uniform mat4 u_particle_billboardMatrix;
 

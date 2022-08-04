@@ -1,9 +1,13 @@
+#version 300 es
+
+precision mediump float;
+
 uniform sampler2D _MainTex; 
 uniform sampler2D _Mask; 
 uniform mediump vec4 _Main_Color;
 
-varying mediump vec2 _maintex_uv;
-varying mediump vec2 _mask_uv;
+in mediump vec2 _maintex_uv;
+in mediump vec2 _mask_uv;
 
 uniform lowp float _mixColorRate;
 uniform lowp float _mixAlphaRate;
@@ -12,7 +16,7 @@ uniform lowp float _mixAlphaRate;
 
 #ifdef LIGHTMAP
 uniform lowp sampler2D _LightmapTex;
-varying mediump vec2 lightmap_TEXCOORD;
+in mediump vec2 lightmap_TEXCOORD;
 lowp vec3 decode_hdr(lowp vec4 data)
 {
     lowp float power =pow( 2.0 ,data.a * 255.0 - 128.0);
@@ -22,12 +26,13 @@ lowp vec3 decode_hdr(lowp vec4 data)
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color; 
-varying lowp float factor;
+in lowp float factor;
 #endif
+out vec4 color; 
 void main()    
 {
-    highp vec4 basecolor=texture2D(_MainTex,_maintex_uv);
-    highp vec4 maskcolor=texture2D(_Mask,_mask_uv);
+    highp vec4 basecolor=texture(_MainTex,_maintex_uv);
+    highp vec4 maskcolor=texture(_Mask,_mask_uv);
 
     lowp vec3 tempcolor=_Main_Color.rgb*basecolor.rgb*maskcolor.rgb*_mixColorRate;
     lowp float tempAlpha=_Main_Color.a*basecolor.a*maskcolor.a*_mixAlphaRate;
@@ -35,7 +40,7 @@ void main()
 
     //----------------------------------------------------------
     #ifdef LIGHTMAP
-    lowp vec4 lightmap = texture2D(_LightmapTex, lightmap_TEXCOORD);
+    lowp vec4 lightmap = texture(_LightmapTex, lightmap_TEXCOORD);
     emission.xyz *= decode_hdr(lightmap);
     #endif
 
@@ -44,7 +49,7 @@ void main()
 
     //emission.xyz = mix(glstate_fog_color.rgb, emission.rgb, factor);
     #endif
-    gl_FragData[0] = emission;
+    color = emission;
 
 
 }

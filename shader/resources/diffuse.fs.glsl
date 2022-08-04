@@ -1,8 +1,10 @@
+#version 300 es
+
 precision lowp float;
 uniform lowp sampler2D _MainTex;
 uniform lowp vec4 _MainColor;
 uniform lowp float _AlphaCut;
-varying mediump vec2 xlv_TEXCOORD0;
+in mediump vec2 xlv_TEXCOORD0;
 
 //light
 lowp vec4 xlv_COLOR = vec4(0.0,0.0,0.0,1.0); 
@@ -16,15 +18,15 @@ uniform lowp vec4 glstate_vec4_lightcolors[8];
 uniform lowp float glstate_float_lightrange[8];
 uniform lowp float glstate_float_lightintensity[8];
 
-varying lowp vec3 v_N;
-varying lowp vec3 v_Mpos;
+in lowp vec3 v_N;
+in lowp vec3 v_Mpos;
 
 //texture2DEtC1Mark
 
 #ifdef LIGHTMAP
 uniform lowp float glstate_lightmapRGBAF16;
 uniform lowp sampler2D _LightmapTex;
-varying mediump vec2 lightmap_TEXCOORD;
+in mediump vec2 lightmap_TEXCOORD;
 lowp vec3 decode_hdr(lowp vec4 data)
 {
     lowp float power =pow( 2.0 ,data.a * 255.0 - 128.0);
@@ -34,7 +36,7 @@ lowp vec3 decode_hdr(lowp vec4 data)
 
 #ifdef FOG
 uniform lowp vec4 glstate_fog_color; 
-varying lowp float factor;
+in lowp float factor;
 #endif
 
 //calcDiffuse 计算漫反射强度函数
@@ -81,9 +83,10 @@ void calcCOLOR(){
     }
 }
 
+out vec4 color; 
 void main() 
 {
-    lowp vec4 basecolor = texture2D(_MainTex, xlv_TEXCOORD0);
+    lowp vec4 basecolor = texture(_MainTex, xlv_TEXCOORD0);
     if(basecolor.a < _AlphaCut)
         discard;
     lowp vec4 fristColor=basecolor*_MainColor;
@@ -94,7 +97,7 @@ void main()
     calcCOLOR();
     
 #ifdef LIGHTMAP
-    lowp vec4 lightmap = texture2D(_LightmapTex, lightmap_TEXCOORD);
+    lowp vec4 lightmap = texture(_LightmapTex, lightmap_TEXCOORD);
     if(glstate_lightmapRGBAF16 == 1.0){
         emission.xyz *= lightmap.xyz;
     }else{
@@ -114,5 +117,5 @@ void main()
     emission.xyz = mix(glstate_fog_color.rgb, emission.rgb, factor);
 #endif
     
-    gl_FragData[0] = emission;
+    color = emission;
 }

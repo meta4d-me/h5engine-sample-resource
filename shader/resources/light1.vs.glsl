@@ -1,7 +1,11 @@
-attribute highp vec3 _glesVertex;   
-attribute lowp vec3 _glesNormal;   
-attribute lowp vec4 _glesColor;                  
-attribute lowp vec4 _glesMultiTexCoord0;        
+#version 300 es
+
+precision mediump float;
+
+in highp vec3 _glesVertex;   
+in lowp vec3 _glesNormal;   
+in lowp vec4 _glesColor;                  
+in lowp vec4 _glesMultiTexCoord0;        
 uniform highp mat4 glstate_matrix_mvp;      
 uniform highp mat4 glstate_matrix_model;
 uniform highp mat4 glstate_matrix_modelview;
@@ -10,8 +14,8 @@ uniform lowp vec4 glstate_vec4_lightdirs[8];
 uniform lowp float glstate_float_spotangelcoss[8];
 uniform lowp float glstate_lightcount;
 
-varying lowp vec4 xlv_COLOR;                
-varying mediump vec2 xlv_TEXCOORD0;     
+out lowp vec4 xlv_COLOR;                
+out mediump vec2 xlv_TEXCOORD0;     
 
 //calcDiffuse 计算漫反射强度函数
 //统一三种光源的传参方式，在函数内混合，方便就不高效

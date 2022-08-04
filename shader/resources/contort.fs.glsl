@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -8,9 +10,10 @@ const float PI = 3.14159265;
 uniform sampler2D _MainTex;
 uniform float _UD;
 uniform float _UR;
-varying highp vec2 xlv_TEXCOORD0;
+in highp vec2 xlv_TEXCOORD0;
 //texture2DEtC1Mark
 
+out vec4 color; 
 void main()
 {
     ivec2 ires = ivec2(1024, 1024);
@@ -31,7 +34,7 @@ void main()
     }
     st = xy1 / Res;
 
-    vec3 irgb = texture2D(_MainTex, st).rgb;
+    vec3 irgb = texture(_MainTex, st).rgb;
 
-    gl_FragData[0] = vec4(irgb, 1.0);
+    color = vec4(irgb, 1.0);
 }

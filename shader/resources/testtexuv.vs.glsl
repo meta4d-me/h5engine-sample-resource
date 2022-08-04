@@ -1,7 +1,11 @@
-attribute vec4 _glesVertex;
-attribute vec4 _glesMultiTexCoord0;
+#version 300 es
+
+precision mediump float;
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
 uniform highp mat4 glstate_matrix_mvp;
-varying highp vec2 xlv_TEXCOORD0;
+out highp vec2 xlv_TEXCOORD0;
 void main()
 {
     highp vec4 tmpvar_1;

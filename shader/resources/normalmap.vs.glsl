@@ -1,10 +1,13 @@
+#version 300 es
 
-// in  attributes from our SpriteBatch
-attribute highp vec3 _glesVertex;
-attribute mediump vec2 _glesMultiTexCoord0;
-attribute lowp vec4 _glesColor;
-attribute lowp vec3 _glesNormal;
-attribute lowp vec3 _glesTangent;  
+precision mediump float;
+
+// in  ins from our SpriteBatch
+in highp vec3 _glesVertex;
+in mediump vec2 _glesMultiTexCoord0;
+in lowp vec4 _glesColor;
+in lowp vec3 _glesNormal;
+in lowp vec3 _glesTangent;  
 
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_model;
@@ -17,13 +20,13 @@ uniform lowp float glstate_float_spotangelcoss[8];
 uniform lowp float glstate_lightcount;
 
 
-// out  varyings to our fragment shader
-varying lowp vec4 xlv_COLOR;
-varying highp vec3 xlv_Position;      
-varying mediump vec2 xlv_TEXCOORD0;
+// out  outs to our fragment shader
+out lowp vec4 xlv_COLOR;
+out highp vec3 xlv_Position;      
+out mediump vec2 xlv_TEXCOORD0;
 
-varying lowp mat3 TBNmat;
-varying lowp vec3 worldpos;
+out lowp mat3 TBNmat;
+out lowp vec3 worldpos;
 
 
 lowp mat3 calBTNMatrix(lowp mat3 NormalMatToWorld,lowp vec3 _normal,lowp vec3 _tangent)

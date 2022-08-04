@@ -38,20 +38,6 @@
                 "fs": "diffuse"
             }
         ],
-        "lightmap": [
-            {
-                "showface": "all",
-                "vs": "f4skin",
-                "fs": "f4skin"
-            }
-        ],
-        "lightmap_fog": [
-            {
-                "showface": "all",
-                "vs": "f4skin",
-                "fs": "f4skin"
-            }
-        ],
         "base_depth": [
             {
                 "showface": "all",

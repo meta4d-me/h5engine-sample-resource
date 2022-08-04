@@ -1,9 +1,13 @@
+#version 300 es
+
+precision mediump float;
+
 uniform sampler2D _MainTex;
 uniform lowp float _BlurGap; //卷积每层间隔单位
 uniform lowp float _BlurSigma; //二维正太分布中的西格玛值
 uniform lowp float _BlurLayer; //卷积层数
 uniform highp vec4 _MainTex_TexelSize;
-varying highp vec2 xlv_TEXCOORD0;
+in highp vec2 xlv_TEXCOORD0;
 
 const lowp float max_Num = 100.0;
 
@@ -21,12 +25,13 @@ lowp float getGausWeight(lowp float rx,lowp float ry)
 	return exp(-(xDistance + yDistance)/sigma22)/sigma22PI;
 }
 
+out vec4 color; 
 void main() 
 {
 	lowp float size =2.0 * _BlurLayer + 1.0;
 
 	highp vec4 color;
-	highp vec4 sample;
+	highp vec4 _sample;
 	lowp float tx;
 	lowp float ty;
 	lowp float rx;
@@ -42,13 +47,13 @@ void main()
 			tx = rx * _MainTex_TexelSize.x * _BlurGap;
 			ty = ry * _MainTex_TexelSize.y * _BlurGap;
 			tempWeight = getGausWeight(rx,ry);
-			sample = texture2D(_MainTex,vec2(xlv_TEXCOORD0.x + tx ,xlv_TEXCOORD0.y + ty));   
-			color +=sample * tempWeight;  
+			_sample = texture(_MainTex,vec2(xlv_TEXCOORD0.x + tx ,xlv_TEXCOORD0.y + ty));   
+			color += _sample * tempWeight;  
 			sum += tempWeight; 
 		}
 	}
 
-    gl_FragData[0] = color/sum;  
+    color = color/sum;  
 }
 
 

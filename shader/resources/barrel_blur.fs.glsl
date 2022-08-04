@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -6,7 +8,7 @@ precision mediump float;
 
 uniform sampler2D _MainTex;
 uniform float _Power;
-varying highp vec2 xlv_TEXCOORD0;
+in highp vec2 xlv_TEXCOORD0;
 
 const int num_iter = 20;
 
@@ -39,6 +41,7 @@ vec3 spectrum_offset(float t)
     return pow(ret, vec3(1.0 / 2.2));
 }
 
+out vec4 color; 
 void main()
 {
     vec2 uv = xlv_TEXCOORD0.xy;
@@ -50,8 +53,8 @@ void main()
         float t = float(i) * reci_num_iter_f;
         vec3 w = spectrum_offset(t);
         sumw += w;
-        sumcol += w * texture2D(_MainTex, barrelDistortion(uv, _Power * t)).rgb;
+        sumcol += w * texture(_MainTex, barrelDistortion(uv, _Power * t)).rgb;
     }
 
-    gl_FragData[0] = vec4(sumcol.rgb / sumw, 1.0);
+    color = vec4(sumcol.rgb / sumw, 1.0);
 }

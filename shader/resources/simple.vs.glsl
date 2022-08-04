@@ -1,23 +1,25 @@
+#version 300 es
+
 precision highp float;
 
-attribute vec4 _glesVertex;
-attribute vec4 _glesMultiTexCoord0;
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
 
 uniform mat4 glstate_matrix_mvp;
 uniform vec4 _MainTex_ST;
 
-varying lowp vec2 xlv_TEXCOORD0;
+out lowp vec2 xlv_TEXCOORD0;
 
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
-varying lowp float factor;
+out lowp float factor;
 #endif
 
 #ifdef SKIN
 lowp mat4 blendMat ;
-attribute lowp vec4 _glesBlendIndex4;
-attribute lowp vec4 _glesBlendWeight4;
+in lowp vec4 _glesBlendIndex4;
+in lowp vec4 _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {
