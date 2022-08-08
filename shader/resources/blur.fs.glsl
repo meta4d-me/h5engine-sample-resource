@@ -18,6 +18,6 @@ void main()
 	sample1=texture(_MainTex,vec2(xlv_TEXCOORD0.x+offset_x,xlv_TEXCOORD0.y-offset_y));
 	sample2=texture(_MainTex,vec2(xlv_TEXCOORD0.x+offset_x,xlv_TEXCOORD0.y+offset_y));
 	sample3=texture(_MainTex,vec2(xlv_TEXCOORD0.x-offset_x,xlv_TEXCOORD0.y+offset_y));
-	highp vec4 color=(sample0+sample1+sample2+sample3) / 4.0;
-    color = color;
+	highp vec4 _color=(sample0+sample1+sample2+sample3) / 4.0;
+    color = _color;
 }

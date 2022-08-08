@@ -23,7 +23,7 @@ vec4 xposure(vec4 color, float gray, float ex)
 out vec4 color; 
 void main()
 {
-    vec4 color = texture(_MainTex, xlv_TEXCOORD0);
-    float lum = .3 * color.x + .59 * color.y + .11 * color.z;
-    color = xposure(color, lum, _K);
+    vec4 _color = texture(_MainTex, xlv_TEXCOORD0);
+    float lum = .3 * _color.x + .59 * _color.y + .11 * _color.z;
+    color = xposure(_color, lum, _K);
 }

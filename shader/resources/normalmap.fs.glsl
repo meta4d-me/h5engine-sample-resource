@@ -56,10 +56,10 @@ void main()
         diff += calcDiffuse(normal,worldpos,lpos,ldir,glstate_float_spotangelcoss[i]);
     }
 	//diff=1.0;
-	lowp vec4 color = vec4(diff,diff,diff,1.0);       
+	lowp vec4 _color = vec4(diff,diff,diff,1.0);       
 
     lowp vec4 tmpvar_3;
-    tmpvar_3 = (color * texture(_MainTex, xlv_TEXCOORD0));
+    tmpvar_3 = (_color * texture(_MainTex, xlv_TEXCOORD0));
 
     color = tmpvar_3;
 }

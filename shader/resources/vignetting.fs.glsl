@@ -67,9 +67,9 @@ void main () {
     float ch_r = mix(base_r, blur_r, Blurred_Corners);
     float ch_b = mix(base_b, blur_b, Blurred_Corners);
 
-    vec4 color = mix(base_color, blur_color, Blurred_Corners);
+    vec4 _color = mix(base_color, blur_color, Blurred_Corners);
 
-    vec4 aberration = vec4(ch_r, color.g, ch_b, 1.0);
+    vec4 aberration = vec4(ch_r, _color.g, ch_b, 1.0);
     vec4 dark = vec4(0.0, 0.0, 0.0, 1.0);
 
     color = mix(aberration, dark, Vignetting);

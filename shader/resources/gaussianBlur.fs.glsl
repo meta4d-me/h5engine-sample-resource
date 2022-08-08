@@ -30,7 +30,7 @@ void main()
 {
 	lowp float size =2.0 * _BlurLayer + 1.0;
 
-	highp vec4 color;
+	highp vec4 _color;
 	highp vec4 _sample;
 	lowp float tx;
 	lowp float ty;
@@ -48,12 +48,12 @@ void main()
 			ty = ry * _MainTex_TexelSize.y * _BlurGap;
 			tempWeight = getGausWeight(rx,ry);
 			_sample = texture(_MainTex,vec2(xlv_TEXCOORD0.x + tx ,xlv_TEXCOORD0.y + ty));   
-			color += _sample * tempWeight;  
+			_color += _sample * tempWeight;  
 			sum += tempWeight; 
 		}
 	}
 
-    color = color/sum;  
+    color = _color/sum;  
 }
 
 

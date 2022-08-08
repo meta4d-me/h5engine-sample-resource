@@ -48,7 +48,7 @@ void main()
 
     vec2 xy = vec2(xlv_TEXCOORD0.x * texSize.x, xlv_TEXCOORD0.y * texSize.y);
 
-    vec4 color = blur_filter(_filter, filter_pos_delta, _MainTex, xy, texSize);
+    vec4 _color = blur_filter(_filter, filter_pos_delta, _MainTex, xy, texSize);
 
-    color = color;
+    color = _color;
 }

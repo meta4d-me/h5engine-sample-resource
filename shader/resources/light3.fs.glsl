@@ -52,10 +52,10 @@ void main()
         spec += calcSpec(normal,worldpos,eyedir,lpos,ldir,glstate_float_spotangelcoss[i]);
     }
 	//diff=1.0;
-	lowp vec4 color = vec4(diff,diff,diff,1.0);       
+	lowp vec4 _color = vec4(diff,diff,diff,1.0);       
     lowp vec4 colorspec =vec4(spec,spec,spec,1.0);
     lowp vec4 fcolor;
-    fcolor = (color * texture(_MainTex, xlv_TEXCOORD0) + colorspec);
+    fcolor = (_color * texture(_MainTex, xlv_TEXCOORD0) + colorspec);
 
     color = fcolor;
 }

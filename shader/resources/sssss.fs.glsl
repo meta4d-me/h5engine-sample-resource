@@ -77,8 +77,8 @@ vec4 blur(vec2 _step) {
 
 out vec4 color; 
 void main () {
-    vec4 color = texture(_MainTex, xlv_TEXCOORD0);
+    vec4 _color = texture(_MainTex, xlv_TEXCOORD0);
     vec4 cblur = blur(_MainTex_TexelSize.xy * _BlurDirection.xy * BLUR_WIDTH * 1.);
-    color = color + cblur * BLUR_W_RGBA;
+    color = _color + cblur * BLUR_W_RGBA;
 
 }

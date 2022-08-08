@@ -18,10 +18,10 @@ in lowp float factor;
 out vec4 color; 
 void main()
 {
-    vec4 color = 2.0 * v_color * _TintColor * texture(_MainTex, v_uv);
+    vec4 _color = 2.0 * v_color * _TintColor * texture(_MainTex, v_uv);
 
     #ifdef FOG
-        color.xyz = mix(glstate_fog_color.rgb, color.rgb, factor);
+        _color.xyz = mix(glstate_fog_color.rgb, color.rgb, factor);
     #endif
     
     color = color;
