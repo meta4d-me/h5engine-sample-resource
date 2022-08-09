@@ -2,14 +2,14 @@
 
 precision mediump float;
 
-in highp vec4 _glesVertex;
-in mediump vec4 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in mediump vec4    _glesMultiTexCoord0;
 
 uniform mediump vec4 _MainTex_ST;
 out mediump vec2 xlv_TEXCOORD0;
 
-in lowp vec3 _glesNormal;
-in lowp vec3 _glesTangent;
+layout(location = 1) in highp vec3    _glesNormal;
+layout(location = 2) in highp vec3    _glesTangent;
 
 uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;
@@ -24,7 +24,7 @@ out lowp float factor;
 
 uniform highp vec4 OFFSET;
 
-in vec4 _glesColor;
+layout(location = 3) in vec4 _glesColor;
 out highp vec4 v_color;
 
 out vec3 v_pos;

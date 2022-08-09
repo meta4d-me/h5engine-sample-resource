@@ -3,8 +3,8 @@
 precision mediump float;  
 
 //坐标属性
-in vec3 _glesVertex;
-in vec2 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in vec2 _glesMultiTexCoord0;
 
 uniform mat4 glstate_matrix_mvp;
 

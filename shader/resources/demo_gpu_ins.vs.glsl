@@ -2,8 +2,8 @@
 
 precision mediump float;
 
-in vec4 _glesVertex;
-in vec4 _glesColor;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 3) in vec4 _glesColor;
 
 #ifdef INSTANCE
 in vec4 a_particle_color;

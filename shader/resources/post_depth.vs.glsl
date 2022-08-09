@@ -5,7 +5,7 @@ precision highp float;
 #else  
 precision mediump float;  
 #endif 
-in vec4 _glesVertex;    
+layout(location = 0) in highp vec3    _glesVertex;  
 //in vec3 _glesNormal;
 //uniform highp mat4 glstate_matrix_modelview;
 uniform highp mat4 glstate_matrix_mvp;      
@@ -22,5 +22,5 @@ void main()
     // xlv_Normal+=1.0;
     // xlv_Normal*=0.5;
 
-    gl_Position = (glstate_matrix_mvp * _glesVertex);  
+    gl_Position = (glstate_matrix_mvp * vec4(_glesVertex,1.0));  
 }

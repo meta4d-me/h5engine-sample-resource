@@ -4,7 +4,7 @@
 
 precision mediump float;
 
-in highp vec3    _glesVertex;
+layout(location = 0) in highp vec3    _glesVertex;
 
 uniform highp mat4      glstate_matrix_view;
 uniform highp mat4      glstate_matrix_project;

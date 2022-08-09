@@ -1,8 +1,8 @@
 #version 300 es
 
-in highp vec3    _glesVertex;
-in highp vec2    _glesMultiTexCoord0;
-in highp vec3    _glesNormal;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in mediump vec2 _glesMultiTexCoord0;
+layout(location = 1) in highp vec3    _glesNormal;
 
 uniform highp mat4      glstate_matrix_mvp;
 uniform highp mat4      glstate_matrix_model;

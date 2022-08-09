@@ -2,8 +2,8 @@
 
 precision mediump float;
 
-in vec4 _glesVertex;
-in lowp vec4 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in mediump vec4    _glesMultiTexCoord0;
 
 uniform highp mat4 glstate_matrix_mvp;
 
@@ -19,7 +19,7 @@ out lowp vec2 uv_Splat2;
 out lowp vec2 uv_Splat3;
 
 #ifdef LIGHTMAP
-in mediump vec4 _glesMultiTexCoord1;
+layout(location = 5) in mediump vec4    _glesMultiTexCoord1;
 uniform mediump vec4 glstate_lightmapOffset;
 out mediump vec2 lightmap_TEXCOORD;
 #endif

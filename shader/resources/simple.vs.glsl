@@ -2,8 +2,8 @@
 
 precision highp float;
 
-in vec4 _glesVertex;
-in vec4 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in vec4 _glesMultiTexCoord0;
 
 uniform mat4 glstate_matrix_mvp;
 uniform vec4 _MainTex_ST;
@@ -18,8 +18,8 @@ out lowp float factor;
 
 #ifdef SKIN
 lowp mat4 blendMat ;
-in lowp vec4 _glesBlendIndex4;
-in lowp vec4 _glesBlendWeight4;
+layout(location = 6) in lowp vec4    _glesBlendIndex4;
+layout(location = 7) in mediump vec4    _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {
