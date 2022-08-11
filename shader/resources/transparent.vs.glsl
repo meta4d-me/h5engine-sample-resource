@@ -9,6 +9,11 @@ uniform mediump vec4 _MainTex_ST;
 
 out mediump vec2 xlv_TEXCOORD0;
 
+#ifdef INSTANCE
+//instance_matrix 固定地址
+layout(location = 12) in highp mat4 instance_matrix;
+#endif
+
 #ifdef FOG
 uniform lowp float glstate_fog_start;
 uniform lowp float glstate_fog_end;
@@ -65,6 +70,11 @@ void main()
     #ifdef SKIN
     position =calcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
     #endif
+
+	#ifdef INSTANCE
+        position = instance_matrix * position;
+    #endif
+
     position = (glstate_matrix_mvp * position);
 
     #ifdef FOG

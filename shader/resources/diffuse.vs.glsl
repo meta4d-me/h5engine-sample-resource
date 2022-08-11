@@ -17,6 +17,10 @@ uniform lowp float glstate_lightcount;
 out highp vec3 v_N;
 out highp vec3 v_Mpos;
 
+#ifdef INSTANCE
+//instance_matrix 固定地址
+layout(location = 12) in highp mat4 instance_matrix;
+#endif
 
 #ifdef LIGHTMAP
 layout(location = 5) in mediump vec2 _glesMultiTexCoord1;
@@ -107,6 +111,11 @@ void main()
     #endif
 	//light
     calcNormal(position);
+
+	#ifdef INSTANCE
+        position = instance_matrix * position;
+    #endif
+	
     position = (glstate_matrix_mvp * position);
 
     #ifdef FOG
