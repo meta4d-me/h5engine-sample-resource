@@ -24,5 +24,5 @@ void main()
         _color.xyz = mix(glstate_fog_color.rgb, color.rgb, factor);
     #endif
     
-    color = color;
+    color = _color;
 }

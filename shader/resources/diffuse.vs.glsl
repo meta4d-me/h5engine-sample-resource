@@ -2,24 +2,28 @@
 
 precision mediump float;
 
-in highp vec4 _glesVertex;
-in mediump vec2 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in mediump vec2 _glesMultiTexCoord0;
 
 uniform highp mat4 glstate_matrix_mvp;
 uniform mediump vec4 _MainTex_ST;
 out mediump vec2 xlv_TEXCOORD0;
 //light
 lowp mat4 blendMat ;
-in lowp vec3 _glesNormal;
+layout(location = 1) in highp vec3    _glesNormal;
 uniform highp mat4 glstate_matrix_model;
 uniform lowp float glstate_lightcount;
 
 out highp vec3 v_N;
 out highp vec3 v_Mpos;
 
+#ifdef INSTANCE
+//instance_matrix 固定地址
+layout(location = 12) in highp mat4 instance_matrix;
+#endif
 
 #ifdef LIGHTMAP
-in mediump vec2 _glesMultiTexCoord1;
+layout(location = 5) in mediump vec2 _glesMultiTexCoord1;
 uniform mediump vec4 glstate_lightmapOffset;
 uniform lowp float glstate_lightmapUV;
 out mediump vec2 lightmap_TEXCOORD;
@@ -32,8 +36,8 @@ out lowp float factor;
 #endif
 
 #ifdef SKIN
-in lowp vec4 _glesBlendIndex4;
-in lowp vec4 _glesBlendWeight4;
+layout(location = 6) in lowp vec4    _glesBlendIndex4;
+layout(location = 7) in mediump vec4    _glesBlendWeight4;
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {
@@ -107,6 +111,11 @@ void main()
     #endif
 	//light
     calcNormal(position);
+
+	#ifdef INSTANCE
+        position = instance_matrix * position;
+    #endif
+	
     position = (glstate_matrix_mvp * position);
 
     #ifdef FOG

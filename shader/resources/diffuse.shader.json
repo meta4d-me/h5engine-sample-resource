@@ -7,7 +7,6 @@
         "_MainColor ('MainColor', Color) = (1,1,1,1)"
     ],
     "passes": {
-
         "base": [
             {
                 "showface": "ccw",
@@ -16,6 +15,20 @@
             }
         ],
         "base_fog": [
+            {
+                "showface": "ccw",
+                "vs": "diffuse",
+                "fs": "diffuse"
+            }
+        ],
+        "instance": [
+            {
+                "showface": "ccw",
+                "vs": "diffuse",
+                "fs": "diffuse"
+            }
+        ],
+        "instance_fog": [
             {
                 "showface": "ccw",
                 "vs": "diffuse",

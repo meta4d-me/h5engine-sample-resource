@@ -2,8 +2,8 @@
 
 precision mediump float;
 
-in highp vec4 _glesVertex;
-in mediump vec4 _glesMultiTexCoord0;   
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in mediump vec4    _glesMultiTexCoord0;   
 
 uniform lowp vec4 _Main_Color;
 uniform highp mat4 glstate_matrix_mvp;

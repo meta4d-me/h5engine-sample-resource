@@ -2,8 +2,8 @@
 
 precision mediump float;
 
-in vec4 _glesVertex;
-in vec4 _glesMultiTexCoord0;
+layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 4) in vec4 _glesMultiTexCoord0;
 
 uniform highp vec4 _MainTex_TexelSize;
 uniform highp vec4 sample_offsets;//采样偏移
