@@ -1,5 +1,5 @@
 {
-    "layer": "transparent",
+    "layer": "geometry",
     "properties": [
         "uv_Basecolor('albedo',Texture)='white'{}",
         "alphaCutoff('alphaCutoff',Range(0.0,1.0))= 0.0",
@@ -16,54 +16,42 @@
     "passes": {
         "base": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }
         ],
         "base_fog": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }
         ],
         "skin": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }
         ],
         "skin_fog": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }
         ],
         "lightmap": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }
         ],
         "lightmap_fog": [
             {
-                "blendmode": "blend",
-                "showface": "ccw",
-                "zwrite": "off",
+                "showface": "all",
                 "vs": "pbr",
                 "fs": "pbr"
             }

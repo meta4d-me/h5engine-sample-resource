@@ -47,6 +47,7 @@ uniform sampler2D uv_Emissive;
 uniform vec4 CustomBasecolor;
 uniform float CustomMetallic;
 uniform float CustomRoughness;
+uniform vec4 CustomEmissiveColor;
 
 #define TEX_FORMAT_METALLIC     rgb
 #define TEX_FORMAT_ROUGHNESS    a
@@ -321,8 +322,12 @@ void main() {
     finalColor += c.diffuse.rgb * lightMapColor * diffuseIntensity;
 #endif
 
-    // finalColor += sRGBtoLINEAR(texture(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb;
+    //emission
+    finalColor += sRGBtoLINEAR(texture(uv_Emissive, xlv_TEXCOORD0 * uvRepeat)).rgb * CustomEmissiveColor.rgb;
+    
+    //AO + Exposure
     finalColor *= u_Exposure * texture(uv_AO, xlv_TEXCOORD0 * uvRepeat).r;
+
 
     //色调映射 （HDR -> LDR）
     finalColor = toneMapACES(finalColor);
