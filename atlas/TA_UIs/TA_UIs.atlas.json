@@ -1,0 +1,49 @@
+{
+    "t": "TA_UIs.png",
+    "w": 256,
+    "h": 256,
+    "s": [
+        [
+            "ui_boundary_close_in",
+            174,
+            79,
+            25,
+            25
+        ],
+        [
+            "ui_public_button_1",
+            0,
+            0,
+            135,
+            54
+        ],
+        [
+            "ui_public_button_hits",
+            0,
+            54,
+            135,
+            54
+        ],
+        [
+            "ui_public_input",
+            135,
+            79,
+            39,
+            28
+        ],
+        [
+            "bg",
+            135,
+            0,
+            100,
+            79
+        ],
+        [
+            "ui_boundary_close",
+            199,
+            79,
+            25,
+            25
+        ]
+    ]
+}
