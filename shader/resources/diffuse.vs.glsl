@@ -38,6 +38,8 @@ out lowp float factor;
 #ifdef SKIN
 layout(location = 6) in lowp vec4    _glesBlendIndex4;
 layout(location = 7) in mediump vec4    _glesBlendWeight4;
+
+#ifdef SKIN_BONE_ARR
 uniform highp vec4 glstate_vec4_bones[110];
 mat4 buildMat4(int index)
 {
@@ -75,6 +77,50 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 			 + buildMat4(i4)*blendWeight.w;
 	return blendMat * srcVertex;
 }
+#endif
+
+#ifdef SKIN_BONE_TEX
+uniform highp sampler2D boneSampler;
+uniform highp float boneCount;
+
+mat4 skinTexBuildMat4(int index)
+{
+	vec4 quat = texture(boneSampler, vec2((float(index*2) + 0.5)/(boneCount*2.0), 0.5));
+	vec4 translation =texture(boneSampler, vec2((float(index*2) + 1.5)/(boneCount*2.0), 0.5));
+
+	float xy = 2.0 * quat.x * quat.y;
+	float xz = 2.0 * quat.x * quat.z;
+	float xw = 2.0 * quat.x * quat.w;
+	float yz = 2.0 * quat.y * quat.z;
+	float yw = 2.0 * quat.y * quat.w;
+	float zw = 2.0 * quat.z * quat.w;
+	float xx = 2.0*quat.x * quat.x;
+	float yy = 2.0*quat.y * quat.y;
+	float zz = 2.0*quat.z * quat.z;
+	float ww = 2.0*quat.w * quat.w;
+	float s = translation.w;
+	mat4 matrix = mat4(
+	(1.0-yy-zz)*s, (xy+zw)*s, (xz-yw)*s, 0,
+	(xy-zw)*s, (1.0-xx-zz)*s, (yz + xw)*s, 0,
+	(xz + yw)*s, (yz - xw)*s, (1.0-xx-yy)*s, 0,
+	translation.x, translation.y, translation.z, 1);
+	return matrix;
+}
+
+highp vec4 skinTexCalcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendWeight)
+{
+	int i = int(blendIndex.x);
+    int i2 =int(blendIndex.y);
+	int i3 =int(blendIndex.z);
+	int i4 =int(blendIndex.w);
+
+    blendMat = skinTexBuildMat4(i)*blendWeight.x
+			 + skinTexBuildMat4(i2)*blendWeight.y
+			 + skinTexBuildMat4(i3)*blendWeight.z
+			 + skinTexBuildMat4(i4)*blendWeight.w;
+	return blendMat * srcVertex;
+}
+#endif
 
 #endif
 
@@ -107,8 +153,13 @@ void main()
     #endif
 
     #ifdef SKIN
-    position =calcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
-    #endif
+		#ifdef SKIN_BONE_ARR
+		position =calcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
+		#endif
+		#ifdef SKIN_BONE_TEX
+		position =skinTexCalcVertex(position,_glesBlendIndex4,_glesBlendWeight4);
+		#endif
+	#endif
 	//light
     calcNormal(position);
 

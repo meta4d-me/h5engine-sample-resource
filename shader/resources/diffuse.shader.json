@@ -4,7 +4,9 @@
         "_MainTex('MainTex',Texture)='white'{}",
         "_AlphaCut('AlphaCut',Range(0.0,1.0)) = 0.5",
         "_MainTex_ST('MainTex_ST',Vector) = (1,1,0,0)",
-        "_MainColor ('MainColor', Color) = (1,1,1,1)"
+        "_MainColor ('MainColor', Color) = (1,1,1,1)",
+        "boneSampler('MainTex',Texture)='white'{}",
+        "boneCount('boneCount',float)=55.0"
     ],
     "passes": {
         "base": [
@@ -43,6 +45,20 @@
             }
         ],
         "skin_fog": [
+            {
+                "showface": "ccw",
+                "vs": "diffuse",
+                "fs": "diffuse"
+            }
+        ],
+        "skinTex": [
+            {
+                "showface": "ccw",
+                "vs": "diffuse",
+                "fs": "diffuse"
+            }
+        ],
+        "skinTex_fog": [
             {
                 "showface": "ccw",
                 "vs": "diffuse",
