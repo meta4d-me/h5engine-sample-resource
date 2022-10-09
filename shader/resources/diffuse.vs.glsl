@@ -80,13 +80,13 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 #endif
 
 #ifdef SKIN_BONE_TEX
-uniform highp sampler2D boneSampler;
-uniform highp float boneCount;
+uniform highp sampler2D _SkinTex;
+uniform highp vec4 _SkinTexMeta;//bonecount,frameid,framecount
 
 mat4 skinTexBuildMat4(int index)
 {
-	vec4 quat = texture(boneSampler, vec2((float(index*2) + 0.5)/(boneCount*2.0), 0.5));
-	vec4 translation =texture(boneSampler, vec2((float(index*2) + 1.5)/(boneCount*2.0), 0.5));
+	vec4 quat = texture(_SkinTex, vec2((float(index*2) + 0.5)/(_SkinTexMeta.x*2.0), (0.5+_SkinTexMeta.y)/_SkinTexMeta.z));
+	vec4 translation =texture(_SkinTex, vec2((float(index*2) + 1.5)/(_SkinTexMeta.x*2.0), (0.5+_SkinTexMeta.y)/_SkinTexMeta.z));
 
 	float xy = 2.0 * quat.x * quat.y;
 	float xz = 2.0 * quat.x * quat.z;
