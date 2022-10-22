@@ -5,8 +5,8 @@
         "_AlphaCut('AlphaCut',Range(0.0,1.0)) = 0.5",
         "_MainTex_ST('MainTex_ST',Vector) = (1,1,0,0)",
         "_MainColor ('MainColor', Color) = (1,1,1,1)",
-        "boneSampler('MainTex',Texture)='white'{}",
-        "boneCount('boneCount',float)=55.0"
+        "_SkinTex('_SkinTex',Texture)='white'{}",
+        "_SkinTexCrossFrom('_SkinTexCrossFrom',Texture)='white'{}"
     ],
     "passes": {
         "base": [
