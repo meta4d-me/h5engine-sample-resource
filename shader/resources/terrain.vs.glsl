@@ -3,6 +3,7 @@
 precision mediump float;
 
 layout(location = 0) in highp vec3    _glesVertex;
+layout(location = 1) in highp vec3    _glesNormal;
 layout(location = 4) in mediump vec4    _glesMultiTexCoord0;
 
 uniform highp mat4 glstate_matrix_mvp;
@@ -12,13 +13,19 @@ uniform lowp vec4 _Splat1_ST;
 uniform lowp vec4 _Splat2_ST;
 uniform lowp vec4 _Splat3_ST;
 
+uniform lowp vec4 _HeightScale;
+
 out lowp vec2 xlv_TEXCOORD0;
+out lowp vec2 normalDir;
 out lowp vec2 uv_Splat0;
 out lowp vec2 uv_Splat1;
 out lowp vec2 uv_Splat2;
 out lowp vec2 uv_Splat3;
 
 out lowp vec2 v_texcoord1;
+
+out highp vec2 holdX;
+
 
 #ifdef LIGHTMAP
 layout(location = 5) in mediump vec4    _glesMultiTexCoord1;
@@ -42,7 +49,11 @@ void main()
     uv_Splat2 = _glesMultiTexCoord0.xy * _Splat2_ST.xy + _Splat2_ST.zw;
     uv_Splat3 = _glesMultiTexCoord0.xy * _Splat3_ST.xy + _Splat3_ST.zw;
     // now v_texcoord1 just send world y to pixel shader, 36 is height map scale
-	v_texcoord1 = vec2(position.y/15.0, position.y/15.0);
+	v_texcoord1 = vec2(position.y/_HeightScale.x, position.y/_HeightScale.x);
+    normalDir = vec2(_glesNormal.x, _glesNormal.z);
+
+    holdX.x = _glesVertex.x;
+    holdX.y = _glesVertex.x;
 
     //----------------------------------------------------------
     #ifdef LIGHTMAP
