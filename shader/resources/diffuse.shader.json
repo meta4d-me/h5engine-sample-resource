@@ -6,7 +6,7 @@
         "_MainTex_ST('MainTex_ST',Vector) = (1,1,0,0)",
         "_MainColor ('MainColor', Color) = (1,1,1,1)",
         "_SkinTex('_SkinTex',Texture)='white'{}",
-        "_SkinTexMeta('_SkinTexMeta',Vector)=(55,0,1,0)"
+        "_SkinTexCrossFrom('_SkinTexCrossFrom',Texture)='white'{}"
     ],
     "passes": {
         "base": [

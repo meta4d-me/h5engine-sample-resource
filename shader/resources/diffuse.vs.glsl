@@ -81,12 +81,53 @@ highp vec4 calcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4 blendW
 
 #ifdef SKIN_BONE_TEX
 uniform highp sampler2D _SkinTex;
-uniform highp vec4 _SkinTexMeta;//bonecount,frameid,framecount
+uniform highp sampler2D _SkinTexCrossFrom;
+uniform highp float _SkinTexMeta[6];//bonecount,frameid,framecount
 
 mat4 skinTexBuildMat4(int index)
 {
-	vec4 quat = texture(_SkinTex, vec2((float(index*2) + 0.5)/(_SkinTexMeta.x*2.0), (0.5+_SkinTexMeta.y)/_SkinTexMeta.z));
-	vec4 translation =texture(_SkinTex, vec2((float(index*2) + 1.5)/(_SkinTexMeta.x*2.0), (0.5+_SkinTexMeta.y)/_SkinTexMeta.z));
+	vec4 quat = texture(_SkinTex, vec2((float(index*2) + 0.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[1])/_SkinTexMeta[2]));
+	vec4 translation =texture(_SkinTex, vec2((float(index*2) + 1.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[1])/_SkinTexMeta[2]));
+
+	float xy = 2.0 * quat.x * quat.y;
+	float xz = 2.0 * quat.x * quat.z;
+	float xw = 2.0 * quat.x * quat.w;
+	float yz = 2.0 * quat.y * quat.z;
+	float yw = 2.0 * quat.y * quat.w;
+	float zw = 2.0 * quat.z * quat.w;
+	float xx = 2.0*quat.x * quat.x;
+	float yy = 2.0*quat.y * quat.y;
+	float zz = 2.0*quat.z * quat.z;
+	float ww = 2.0*quat.w * quat.w;
+	float s = translation.w;
+	mat4 matrix = mat4(
+	(1.0-yy-zz)*s, (xy+zw)*s, (xz-yw)*s, 0,
+	(xy-zw)*s, (1.0-xx-zz)*s, (yz + xw)*s, 0,
+	(xz + yw)*s, (yz - xw)*s, (1.0-xx-yy)*s, 0,
+	translation.x, translation.y, translation.z, 1);
+	return matrix;
+}
+
+vec4 quatLerp(vec4 srca,vec4 srcb,float t)
+{
+	if (dot(srca,srcb)< 0.0) {
+		srcb=-1.0*srcb;
+	}
+	vec4 lerp=mix(srca,srcb,t);
+	float len =1.0/length(lerp);
+	return lerp * len;
+}
+
+mat4 crossSkinTexBuildMat4(int index)
+{
+	vec4 toQuat = texture(_SkinTex, vec2((float(index*2) + 0.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[1])/_SkinTexMeta[2]));
+	vec4 toTranslation =texture(_SkinTex, vec2((float(index*2) + 1.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[1])/_SkinTexMeta[2]));
+
+	vec4 fromQuat=texture(_SkinTexCrossFrom, vec2((float(index*2) + 0.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[4])/_SkinTexMeta[5]));
+	vec4 fromTranslation=texture(_SkinTexCrossFrom, vec2((float(index*2) + 1.5)/(_SkinTexMeta[0]*2.0), (0.5+_SkinTexMeta[4])/_SkinTexMeta[5]));
+
+	vec4 quat= quatLerp(fromQuat,toQuat,_SkinTexMeta[3]);
+	vec4 translation=mix(fromTranslation,toTranslation,_SkinTexMeta[3]);
 
 	float xy = 2.0 * quat.x * quat.y;
 	float xz = 2.0 * quat.x * quat.z;
@@ -114,11 +155,19 @@ highp vec4 skinTexCalcVertex(highp vec4 srcVertex,lowp vec4 blendIndex,lowp vec4
 	int i3 =int(blendIndex.z);
 	int i4 =int(blendIndex.w);
 
-    blendMat = skinTexBuildMat4(i)*blendWeight.x
-			 + skinTexBuildMat4(i2)*blendWeight.y
-			 + skinTexBuildMat4(i3)*blendWeight.z
-			 + skinTexBuildMat4(i4)*blendWeight.w;
-	return blendMat * srcVertex;
+	if(_SkinTexMeta[3]==1.0){
+		blendMat = skinTexBuildMat4(i)*blendWeight.x
+				+ skinTexBuildMat4(i2)*blendWeight.y
+				+ skinTexBuildMat4(i3)*blendWeight.z
+				+ skinTexBuildMat4(i4)*blendWeight.w;
+		return blendMat * srcVertex;
+	}else{
+		blendMat = crossSkinTexBuildMat4(i)*blendWeight.x
+				+ crossSkinTexBuildMat4(i2)*blendWeight.y
+				+ crossSkinTexBuildMat4(i3)*blendWeight.z
+				+ crossSkinTexBuildMat4(i4)*blendWeight.w;
+		return blendMat * srcVertex;
+	}
 }
 #endif
 
