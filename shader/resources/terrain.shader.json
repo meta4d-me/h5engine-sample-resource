@@ -5,6 +5,7 @@
         "_Splat1('layer 2',Texture) = 'white'{}",
         "_Splat2('layer 3',Texture) = 'white'{}",
         "_Splat3('layer 4',Texture) = 'white'{}",
+        "_HeightMap('Height Map', Texture) = 'white'{}",	
         "_Control('Control (RGBA)',Texture) = 'white'{}"
     ],
     "passes": {

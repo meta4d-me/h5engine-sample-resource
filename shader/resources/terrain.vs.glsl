@@ -13,6 +13,8 @@ uniform lowp vec4 _Splat1_ST;
 uniform lowp vec4 _Splat2_ST;
 uniform lowp vec4 _Splat3_ST;
 
+uniform lowp sampler2D _HeightMap;
+
 uniform lowp vec4 _HeightScale;
 
 out lowp vec2 xlv_TEXCOORD0;
@@ -41,7 +43,16 @@ out lowp float factor;
 
 void main()
 {
-    highp vec4 position=vec4(_glesVertex.xyz,1.0);
+    
+
+    // heightmap lookup uv can not scale;
+    mediump vec2 heightmapUV = _glesMultiTexCoord0.xy;
+    heightmapUV.y = 1.0 - heightmapUV.y;
+
+    lowp vec4 height = texture(_HeightMap, heightmapUV);
+    highp vec4 vertex_ = vec4(_glesVertex, 1.0);
+    vertex_.y = height.x * _HeightScale.x;
+    highp vec4 position = vertex_;
 
 	xlv_TEXCOORD0 = _glesMultiTexCoord0.xy;
     uv_Splat0 = _glesMultiTexCoord0.xy * _Splat0_ST.xy + _Splat0_ST.zw;
