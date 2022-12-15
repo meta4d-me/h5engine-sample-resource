@@ -1,0 +1,12 @@
+{
+    "files": {
+        "texts": [
+            "./Image.glsl"
+        ]
+    },
+    "data": {
+        "Image": {
+            "code": 0
+        }
+    }
+}
